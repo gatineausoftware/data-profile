@@ -50,9 +50,9 @@
 
 
 (defn -main
-  [& args]
+  [filename & args]
 (let [sc (make-spark-context)]
-(get-column sc "resources/upcs.csv")))
+(get-column sc filename)))
 
 
 
