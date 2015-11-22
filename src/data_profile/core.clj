@@ -46,13 +46,24 @@
   (->>
    (spark/text-file sc filename)
    (spark/map #(str/split % #","))
-   (spark/first)))
+   (spark/first)
+   (clojure.pprint/pprint)))
+
+
+(defn get-average [sc filename]
+  (->>
+   (spark/text-file sc filename)
+   (spark/map #(str/split % #","))
+   (spark/map first)
+   (spark/map bigdec)
+   (spark/reduce +)
+   (clojure.pprint/pprint)))
 
 
 (defn -main
   [filename & args]
 (let [sc (make-spark-context)]
-(get-column sc filename)))
+(get-average sc filename)))
 
 
 
