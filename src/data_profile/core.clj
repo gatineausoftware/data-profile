@@ -42,6 +42,13 @@
    (spark/collect)))
 
 
+;;plow through exceptions
+(defn  string->integer [s]
+    (try
+      (bigint s)
+      (catch Exception e 0)))
+
+
 
 (defn get-row [sc filename]
   (->>
@@ -87,11 +94,13 @@
     (clojure.pprint/pprint)
     ))
 
+
+
   (defn max-col-val [sc filename n]
   (->>
     (spark/text-file sc filename)
     (spark/map (partial getcolumn n))
-    (spark/map bigint)
+    (spark/map string->integer)
     (spark/reduce max)
     (clojure.pprint/pprint)))
 
@@ -111,13 +120,14 @@
    (clojure.pprint/pprint)))
 
 
+ ;;could change this to count distribution of number of columns
  (defn get-min-columns [sc filename]
    (->>
    (spark/text-file sc filename)
-    (spark/map #(str/split % #","))
+   (spark/map #(str/split % #","))
    (spark/map count)
    (spark/reduce min)
-    (clojure.pprint/pprint)))
+   (clojure.pprint/pprint)))
 
 
 
