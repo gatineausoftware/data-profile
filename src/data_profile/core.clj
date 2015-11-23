@@ -104,7 +104,7 @@
    (->>
     (spark/text-file sc filename)
     (spark/map #(str/split % #","))
-    (spark/filter #(= n (count %)))
+    (spark/filter #(< n (count %)))
     (spark/count)
     (clojure.pprint/pprint)
     ))
