@@ -74,10 +74,18 @@
     (spark/text-file sc filename)
     (spark/map #(str/split % #","))
     (spark/filter #(< (count %) n))
-    clojure.pprint/pprint))
+     spark/collect
+     clojure.pprint/pprint))
 
 
-
+(defn count-incomplete-records [sc filename n]
+   (->>
+    (spark/text-file sc filename)
+    (spark/map #(str/split % #","))
+    (spark/filter #(< (count %) n))
+    (spark/count)
+    (clojure.pprint/pprint)
+    ))
 
   (defn max-col-val [sc filename n]
   (->>
@@ -111,14 +119,7 @@
    (spark/reduce min)
     (clojure.pprint/pprint)))
 
- (defn count-incomplete-columns [sc filename n]
-   (->>
-    (spark/text-file sc filename)
-    (spark/map #(str/split % #","))
-    (spark/filter #(< (count %) n))
-    (spark/count)
-    (clojure.pprint/pprint)
-    ))
+
 
 
 
@@ -130,7 +131,7 @@
     "max-col-val" (max-col-val sc filename (bigint (first args)))
     "max-col-count" (get-max-columns sc filename)
     "min-col-count" (get-min-columns sc filename)
-    "count-incomplete-rows" (count-incomplete-columns sc filename (bigint (first args)))
+    "count-incomplete-rows" (count-incomplete-records sc filename (bigint (first args)))
     "get-incomplete-records" (get-incomplete-records sc filename (bigint (first args)))
     (println "usage: [count, max-col-val, max-col-count, min-col-count, count-incomplete-rows] [n]"))))
 
