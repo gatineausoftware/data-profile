@@ -50,6 +50,7 @@
    (clojure.pprint/pprint)))
 
 
+
 (defn get-average [sc filename]
   (->>
    (spark/text-file sc filename)
@@ -60,20 +61,58 @@
    (clojure.pprint/pprint)))
 
 
+  (defn getcolumn [n row]
+    (->
+       (str/split row #",")
+       (nth n)
+     ))
+
+
   (defn get-max [sc filename n]
   (->>
     (spark/text-file sc filename)
-    (spark/map #(str/split % #","))
-    (spark/map #(nth % n))
-    (spark/map bigdec)
+    (spark/map (partial getcolumn n))
+    (spark/map bigint)
     (spark/reduce max)
     (clojure.pprint/pprint)))
 
 
+ (defn count-num-records [sc filename]
+   (->> (spark/text-file sc filename)
+         spark/count
+        (clojure.pprint/pprint)))
+
+
+ (defn get-max-columns [sc filename]
+   (->>
+   (spark/text-file sc filename)
+   (spark/map #(str/split % #","))
+   (spark/map count)
+   (spark/reduce max)
+   (clojure.pprint/pprint)))
+
+
+ (defn get-min-columns [sc filename]
+   (->>
+   (spark/text-file sc filename)
+    (spark/map #(str/split % #","))
+   (spark/map count)
+   (spark/reduce min)
+    (clojure.pprint/pprint)))
+
+
 (defn -main
-  [filename n & args]
-(let [sc (make-spark-context)]
-(get-max sc filename (bigdec n))))
+  [command filename & args]
+  (let [sc (make-spark-context)]
+  (case command
+    "count" (count-num-records sc filename)
+    "max" (get-max sc filename (bigint (first args)))
+    "max-col" (get-max-columns sc filename)
+    "min-col" (get-min-columns sc filename)
+    "valid commmans are: count, max")))
+
+
+
 
 
 
