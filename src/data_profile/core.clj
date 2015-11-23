@@ -33,6 +33,8 @@
 	  clojure.pprint/pprint))
 
 
+
+ ;;this doesn't work.  returns the whole file
 (defn get-sample [sc filename]
   (->>
    (spark/text-file sc filename)
@@ -41,8 +43,7 @@
 
 
 
-
-(defn get-column [sc filename]
+(defn get-row [sc filename]
   (->>
    (spark/text-file sc filename)
    (spark/map #(str/split % #","))
@@ -50,25 +51,35 @@
    (clojure.pprint/pprint)))
 
 
-
-(defn get-average [sc filename]
-  (->>
-   (spark/text-file sc filename)
-   (spark/map #(str/split % #","))
-   (spark/map first)
-   (spark/map bigdec)
-   (spark/reduce +)
-   (clojure.pprint/pprint)))
-
-
-  (defn getcolumn [n row]
+(defn getcolumn [n row]
     (->
        (str/split row #",")
        (nth n)
      ))
 
 
-  (defn get-max [sc filename n]
+(defn get-average [sc filename n]
+  (let [d (spark/text-file sc filename)
+        c (spark/count d)
+        s (->>
+            (spark/map (partial getcolumn n))
+            (spark/map bigint)
+            (spark/reduce +))
+        ]
+    (clojure.pprint/pprint (/ s c))))
+
+
+(defn get-incomplete-records [sc filename n]
+  (->>
+    (spark/text-file sc filename)
+    (spark/map #(str/split % #","))
+    (spark/filter #(< (count %) n))
+    clojure.pprint/pprint))
+
+
+
+
+  (defn max-col-val [sc filename n]
   (->>
     (spark/text-file sc filename)
     (spark/map (partial getcolumn n))
@@ -116,11 +127,12 @@
   (let [sc (make-spark-context)]
   (case command
     "count" (count-num-records sc filename)
-    "max" (get-max sc filename (bigint (first args)))
-    "max-col" (get-max-columns sc filename)
-    "min-col" (get-min-columns sc filename)
-    "count-incomplete" (count-incomplete-columns sc filename (bigint (first args)))
-    "valid commmans are: count, max")))
+    "max-col-val" (max-col-val sc filename (bigint (first args)))
+    "max-col-count" (get-max-columns sc filename)
+    "min-col-count" (get-min-columns sc filename)
+    "count-incomplete-rows" (count-incomplete-columns sc filename (bigint (first args)))
+    "get-incomplete-records" (get-incomplete-records sc filename (biging (first args)))
+    (println "usage: [count, max-col-val, max-col-count, min-col-count, count-incomplete-rows] [n]"))))
 
 
 
