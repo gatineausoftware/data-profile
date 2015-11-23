@@ -60,10 +60,20 @@
    (clojure.pprint/pprint)))
 
 
+  (defn get-max [sc filename n]
+  (->>
+    (spark/text-file sc filename)
+    (spark/map #(str/split % #","))
+    (spark/map #(nth % n))
+    (spark/map bigdec)
+    (spark/reduce max)
+    (print)))
+
+
 (defn -main
-  [filename & args]
+  [filename n & args]
 (let [sc (make-spark-context)]
-(get-average sc filename)))
+(get-max sc filename (bigdec n))))
 
 
 
