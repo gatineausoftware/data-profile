@@ -16,21 +16,12 @@
 
 
 
+;;plow through exceptions
+(defn  string->integer [s]
+    (try
+      (bigint s)
+      (catch Exception e 0)))
 
-(defn count-records [sc filename]
-	(->>
-	(spark/text-file sc filename)
-	(spark/map (fn [l] 1))
-	(spark/reduce +)
-	clojure.pprint/pprint))
-
-
-
-(defn print-file [sc filename]
-	(->>
-    (spark/text-file sc filename)
-	  spark/collect
-	  clojure.pprint/pprint))
 
 
 
@@ -42,12 +33,6 @@
    (spark/collect)))
 
 
-;;plow through exceptions
-(defn  string->integer [s]
-    (try
-      (bigint s)
-      (catch Exception e 0)))
-
 
 
 (defn get-row [sc filename]
@@ -55,7 +40,7 @@
    (spark/text-file sc filename)
    (spark/map #(str/split % #","))
    (spark/first)
-   (clojure.pprint/pprint)))
+   ))
 
 
 ;;skip incomplete records...or should i just filter first?
@@ -68,8 +53,6 @@
 
 
 
-
-
 (defn get-average [sc filename n]
   (let [d (spark/text-file sc filename)
         c (spark/count d)
@@ -78,7 +61,7 @@
             (spark/map bigint)
             (spark/reduce +))
         ]
-    (clojure.pprint/pprint (/ s c))))
+    (/ s c)))
 
 
 (defn get-incomplete-records [sc filename n]
@@ -87,7 +70,7 @@
     (spark/map #(str/split % #","))
     (spark/filter #(< (count %) n))
      spark/collect
-     clojure.pprint/pprint))
+    ))
 
 
 (defn count-incomplete-records [sc filename n]
@@ -96,7 +79,6 @@
     (spark/map #(str/split % #","))
     (spark/filter #(< (count %) n))
     (spark/count)
-    (clojure.pprint/pprint)
     ))
 
 
@@ -106,14 +88,13 @@
     (spark/text-file sc filename)
     (spark/map (partial getcolumn n))
     (spark/map string->integer)
-    (spark/reduce max)
-    (clojure.pprint/pprint)))
+    (spark/reduce max)))
 
 
  (defn count-num-records [sc filename]
    (->> (spark/text-file sc filename)
          spark/count
-        (clojure.pprint/pprint)))
+    ))
 
 
  (defn get-max-columns [sc filename]
@@ -121,8 +102,8 @@
    (spark/text-file sc filename)
    (spark/map #(str/split % #","))
    (spark/map count)
-   (spark/reduce max)
-   (clojure.pprint/pprint)))
+   (spark/reduce max)))
+
 
 
  ;;could change this to count distribution of number of columns
@@ -132,15 +113,24 @@
    (spark/map #(str/split % #","))
    (spark/map count)
    (spark/reduce min)
-   (clojure.pprint/pprint)))
+   ))
 
 
-
-
+ ;;bit of nonesense to handle key-value pairs
+ (defn get-num-col-dist [sc filename]
+    (->>
+    (spark/text-file sc filename)
+    (spark/map #(str/split % #","))
+    (spark/map-to-pair (fn [r] (spark/tuple (count r) 1)))
+    (spark/reduce-by-key +)
+    (spark/map (s-de/key-value-fn (fn [k v] [k v])))
+     spark/collect
+     ))
 
 (defn -main
   [command filename & args]
   (let [sc (make-spark-context)]
+  (->>
   (case command
     "count" (count-num-records sc filename)
     "max-col-val" (max-col-val sc filename (bigint (first args)))
@@ -148,7 +138,10 @@
     "min-col-count" (get-min-columns sc filename)
     "count-incomplete-rows" (count-incomplete-records sc filename (bigint (first args)))
     "get-incomplete-records" (get-incomplete-records sc filename (bigint (first args)))
-    (println "usage: [count, max-col-val, max-col-count, min-col-count, count-incomplete-rows] [n]"))))
+    "get-num-col-dist" (get-num-col-dist sc filename)
+    "usage: [count, max-col-val, max-col-count, min-col-count, count-incomplete-rows] [n]")
+   clojure.pprint/pprint)))
+
 
 
 
