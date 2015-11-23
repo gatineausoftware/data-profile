@@ -131,7 +131,7 @@
     "max-col-count" (get-max-columns sc filename)
     "min-col-count" (get-min-columns sc filename)
     "count-incomplete-rows" (count-incomplete-columns sc filename (bigint (first args)))
-    "get-incomplete-records" (get-incomplete-records sc filename (biging (first args)))
+    "get-incomplete-records" (get-incomplete-records sc filename (bigint (first args)))
     (println "usage: [count, max-col-val, max-col-count, min-col-count, count-incomplete-rows] [n]"))))
 
 
