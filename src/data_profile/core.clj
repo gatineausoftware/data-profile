@@ -104,7 +104,7 @@
    (->>
     (spark/text-file sc filename)
     (spark/map #(str/split % #","))
-    (spark/filter #(< n (count %)))
+    (spark/filter #(< (count %) n))
     (spark/count)
     (clojure.pprint/pprint)
     ))
@@ -119,7 +119,7 @@
     "max" (get-max sc filename (bigint (first args)))
     "max-col" (get-max-columns sc filename)
     "min-col" (get-min-columns sc filename)
-    "count-incomplete" (count-incomplete-columns sc filename (first args))
+    "count-incomplete" (count-incomplete-columns sc filename (bigint (first args)))
     "valid commmans are: count, max")))
 
 
