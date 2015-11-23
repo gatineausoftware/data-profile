@@ -60,12 +60,14 @@
 
 ;;skip incomplete records...or should i just filter first?
 (defn getcolumn [n row]
-    (->
-       (str/split row #",")
-       (try
-         (nth n)
-         (catch Exception e nil))
-     ))
+  (let [s (str/split row #",")]
+    (try
+      (nth s n)
+      (catch Exception e nil))))
+
+
+
+
 
 
 (defn get-average [sc filename n]
