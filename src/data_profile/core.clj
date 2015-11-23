@@ -58,10 +58,13 @@
    (clojure.pprint/pprint)))
 
 
+;;skip incomplete records...or should i just filter first?
 (defn getcolumn [n row]
     (->
        (str/split row #",")
-       (nth n)
+       (try
+         (nth n)
+         (catch Exception e nil))
      ))
 
 
@@ -95,7 +98,7 @@
     ))
 
 
-
+;;only look at valid records
   (defn max-col-val [sc filename n]
   (->>
     (spark/text-file sc filename)
