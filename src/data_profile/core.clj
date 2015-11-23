@@ -67,7 +67,7 @@
     (spark/map #(nth % n))
     (spark/map bigdec)
     (spark/reduce max)
-    (print)))
+    (clojure.pprint/pprint)))
 
 
 (defn -main
