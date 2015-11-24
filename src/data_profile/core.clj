@@ -167,13 +167,6 @@
      false))
 
 
- (defn check-schema [sc filename]
-    (->>
-    (spark/text-file sc filename)
-    (spark/map #(str/split % #","))
-    (spark/filter  (complement (partial check-row schema)))
-    (spark/collect)))
-
 
  (defn write-bad-data [sc filename output]
    (->>
@@ -183,6 +176,14 @@
     (spark/map #(apply str (interpose "," %)))
     (spark/save-as-text-file output)))
 
+
+
+ (defn check-schema [sc filename]
+    (->>
+    (spark/text-file sc filename)
+    (spark/map #(str/split % #","))
+    (spark/filter  (complement (partial check-row schema)))
+    (spark/collect)))
 
 
 (defn -main
