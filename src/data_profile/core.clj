@@ -162,8 +162,9 @@
 
 
  (defn check-row [schema row]
-   (every? true? (map check-field schema row)))
-
+   (if (= (count schema) (count row))
+     (every? true? (map check-field schema row))
+     false))
 
 
  (defn check-schema [sc filename]
@@ -181,7 +182,6 @@
     (spark/filter  (complement (partial check-row schema)))
     (spark/map #(apply str (interpose "," %)))
     (spark/save-as-text-file output)))
-
 
 
 
