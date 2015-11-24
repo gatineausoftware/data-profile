@@ -8,6 +8,9 @@
   (:gen-class))
 
 
+(def smallest_int -2147483648)
+(def largest_int 2147483647)
+
 (defn make-spark-context []
   (let [c (-> (conf/spark-conf)
               (conf/master "local[*]")
@@ -124,8 +127,63 @@
     (spark/map-to-pair (fn [r] (spark/tuple (count r) 1)))
     (spark/reduce-by-key +)
     (spark/map (s-de/key-value-fn (fn [k v] [k v])))
-     spark/collect
-     ))
+     spark/collect))
+
+
+
+
+ (def schema
+   [{:name :week_id :type :integer :min 0 :max 999999}
+    {:name :store_id :type :numeric}
+    {:name :upc_id :type :numeric}
+    {:name :household_id :type :numeric}
+    {:name :facts :type :string}
+    {:name :truprice :type :string}
+    {:name :shopstyles :type :string}
+    {:name :sales :type :float  :min 0 :max 100000}
+    {:name :transactions :type :integer :min 0 :max largest_int}
+    {:name :units :type :integer :min 0 :max largest_int}
+    ])
+
+
+ (defn check-field [a b]
+   ;(clojure.pprint/pprint b)
+   (case (:type a)
+     :integer (if (try (integer? (bigint b))
+                (catch Exception e false))
+                (and (<= (bigint b) (:max a) ) (>= (bigint b) (:min a)))
+                false)
+     :numeric (if (try (integer? (bigint b))
+                    (catch Exception e false))
+                true)
+
+     true))
+
+
+
+ (defn check-row [schema row]
+   (every? true? (map check-field schema row)))
+
+
+
+ (defn check-schema [sc filename]
+    (->>
+    (spark/text-file sc filename)
+    (spark/map #(str/split % #","))
+    (spark/filter  (complement (partial check-row schema)))
+    (spark/collect)))
+
+
+ (defn write-bad-data [sc filename output]
+   (->>
+    (spark/text-file sc filename)
+    (spark/map #(str/split % #","))
+    (spark/filter  (complement (partial check-row schema)))
+    (spark/map #(apply str (interpose "," %)))
+    (spark/save-as-text-file output)))
+
+
+
 
 (defn -main
   [command filename & args]
@@ -139,6 +197,8 @@
     "count-incomplete-rows" (count-incomplete-records sc filename (bigint (first args)))
     "get-incomplete-records" (get-incomplete-records sc filename (bigint (first args)))
     "get-num-col-dist" (get-num-col-dist sc filename)
+    "check-schema" (check-schema sc filename)
+    "write-bad-data" (write-bad-data sc filename (first args))
     "usage: [count, max-col-val, max-col-count, min-col-count, count-incomplete-rows] [n]")
    clojure.pprint/pprint)))
 
