@@ -10,6 +10,7 @@
   (:gen-class))
 
 ;; verifies that a columm satisfies schema, returns true or false
+;should use if-let here
  (defn columm-satisfies-schema? [a b]
    (case (:type a)
      :integer (if (is-integer? b)
@@ -104,9 +105,9 @@
     "count-incomplete-rows" (count-incomplete-records rdd (bigint (first args)))
     "get-incomplete-records" (get-incomplete-records rdd (bigint (first args)))
     "get-num-col-dist" (get-num-col-dist rdd)
-    "write-bad-data" (write-bad-data rdd (schema/get-schema "redshift") (first args))
-    "get-schema-errors" (get-schema-errors rdd (schema/get-schema "redshift"))
-    "check-schema" (check-schema rdd (schema/get-schema "redshift"))
+    "write-bad-data" (write-bad-data rdd (schema/get-schema (first args)) (second args))
+    "get-schema-errors" (get-schema-errors rdd (schema/get-schema (first args)))
+    "check-schema" (check-schema rdd (schema/get-schema (first args)))
     "usage: [count, max-col-val, max-col-count, min-col-count, count-incomplete-rows] [n]")
    clojure.pprint/pprint)))
 
