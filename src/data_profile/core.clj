@@ -7,7 +7,6 @@
             [clojure-csv.core :as csv]
             [data-profile.schema :as schema])
   (:use [data-profile.util])
-
   (:gen-class))
 
 ;; verifies that a columm satisfies schema, returns true or false
@@ -19,8 +18,6 @@
      :numeric (if (is-integer? b)
                 true)
      :varchar (if (<= (count b) (:size a)) true false)
-
-
      true))
 
 
