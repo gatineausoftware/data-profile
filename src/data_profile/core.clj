@@ -10,11 +10,7 @@
 
   (:gen-class))
 
-
-
-
-
- ;; verifies that a columm satisfies schema, returns true or false
+;; verifies that a columm satisfies schema, returns true or false
  (defn columm-satisfies-schema? [a b]
    (case (:type a)
      :integer (if (is-integer? b)
@@ -47,8 +43,6 @@
     (get-bad-rows rdd schema)
     (spark/map #(apply str (interpose "," %)))
     (spark/save-as-text-file output)))
-
-
 
 
   (defn check-integer [x min max]
@@ -88,11 +82,6 @@
     (spark/take 100)
 
     ))
-
-
-
-
-
 
 
  (defn check-schema [rdd schema]

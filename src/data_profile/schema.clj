@@ -11,9 +11,9 @@
     {:name :facts :type :string}
     {:name :truprice :type :string}
     {:name :shopstyles :type :string}
-    {:name :sales :type :float  :min 0 :max 100000}
+    {:name :sales :type :float  :min -1000 :max 1000}
     {:name :transactions :type :integer :min 0 :max largest_int}
-    {:name :units :type :integer :min 0 :max largest_int}
+    {:name :units :type :integer :min -100 :max 100}
     ])
 
 
