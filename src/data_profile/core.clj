@@ -45,7 +45,7 @@
 
   (defn check-integer [x min max]
     (if (is-integer? x)
-          (if (or (x < min) (x > max))
+          (if (or (< (string->integer x) min) (> (string->integer x) max))
             {:error :int_range} {:error :none}) {:error :non_int}))
 
 
