@@ -24,9 +24,9 @@ spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-S
 2. directory can be s3 or hdfs.
 
 ### Examples
-lein run check-schema netbase/ resources/redshift.schema
-lein run write-bad-data netbase/ resources/redshift.schema output
-lein run get-schema-errors netbase/ resources/redshift.schema
+1. lein run check-schema netbase/ resources/redshift.schema
+2. lein run write-bad-data netbase/ resources/redshift.schema output
+3. lein run get-schema-errors netbase/ resources/redshift.schema
 
 
 
