@@ -34,7 +34,7 @@
     ))
 
 
- ;row will be a java arraylist..
+
  (defn profile_row [row]
    (mapv profile-field row))
 
@@ -48,13 +48,14 @@
     (update-in [:profile :string :max_length] max (get-in p [:profile :string :max_length]))))
 
 
-
+ ;;this is causing the stack overflow.
  (defn a_row [ar r]
    (map a_field ar r))
 
 
 
- ;;stack blow out when running lcoally
+ ;;stack overflow when running lcoally or on cluster.
+ ;;works on small data sets.
  (defn profile-rdd [rdd]
    (->>
     rdd
