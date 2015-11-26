@@ -1,12 +1,13 @@
 (ns data-profile.core
-(:require [clojure.string :as string]
-            [sparkling.conf :as conf]
-            [sparkling.core :as spark]
-            [sparkling.destructuring :as s-de]
-            [clojure.string :as str]
-            [clojure-csv.core :as csv]
-            [data-profile.schema :as schema])
-  (:use [data-profile.util])
+  (:require   [clojure.string :as string]
+              [sparkling.conf :as conf]
+              [sparkling.core :as spark]
+              [sparkling.destructuring :as s-de]
+              [clojure.string :as str]
+              [clojure-csv.core :as csv]
+              [data-profile.schema :as schema])
+  (:use       [data-profile.util]
+              [data-profile.profile])
   (:gen-class))
 
 ;; verifies that a columm satisfies schema, returns true or false
@@ -108,6 +109,7 @@
     "write-bad-data" (write-bad-data rdd (schema/get-schema (first args)) (second args))
     "get-schema-errors" (get-schema-errors rdd (schema/get-schema (first args)))
     "check-schema" (check-schema rdd (schema/get-schema (first args)))
+    "profile" (profile-rdd rdd)
     "usage: [count, max-col-val, max-col-count, min-col-count, count-incomplete-rows] [n]")
    clojure.pprint/pprint)))
 

@@ -52,4 +52,5 @@ spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-S
 15. be sure to cache rdd for sequences of operations.
 16. do i need gen-class in util?
 17. re-name schemas, adopt a database/table convention.
-18. 
+18. create function to estimate schema.  take sample from file, check to see if field is date, int, float, etc.. track max size of strings, range of numeric fields.  autogenerate a schema.
+19. 
