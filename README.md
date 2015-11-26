@@ -30,8 +30,8 @@ spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-S
 3. lein run get-schema-errors netbase/ redshift.schema
 
 ##### on cluster
-1. spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-SNAPSHOT-standalone.jar write-bad-data s3n://ccnadl/raw/ahold/yr=2015/mo=11/dy=13/Coca_Cola_201349.csv  ahold.schema output
-
+1. spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-SNAPSHOT-standalone.jar write-bad-data s3n://path/yourfile.csv  ahold.schema output
+2. spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-SNAPSHOT-standalone.jar profile yourfile.csv
 
 
 ### to do
