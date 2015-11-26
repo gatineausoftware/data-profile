@@ -35,5 +35,21 @@ spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-S
 
 
 ### to do
-1. read schema in from a file, not hard-code
-2. 
+1. use if-let construction
+2. try to dispatch functions rather than using case.
+3. do functions need to be compiled to execute on cluster?
+4. build some test cases.
+5. get midje working.
+6. get repl development working
+7. build function to get distribution of all columns (int, non int, string date etc…)  [run a map that creates a structure containing the data plus a collection of stats…then run reduce over it, i.e., overcome spark/reduce limitations]
+8. compare performance of clojure vs scala.
+9. build function that outputs 'good' data and 'bad' data in separate locations.
+10. clean up main loop.
+11. add more metadata to schema, e.g., how is file delimited (comma, tab, | etc…)
+12. read data from other file formats (ORC, Parquet?  Spark supports this, but is it realistic for raw data to come in in these formats?)
+13. finish implementing schema (e.g., date)
+14. how to encode max_int in serialized schema?
+15. be sure to cache rdd for sequences of operations.
+16. do i need gen-class in util?
+17. re-name schemas, adopt a database/table convention.
+18. 
