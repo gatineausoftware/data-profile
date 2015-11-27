@@ -48,10 +48,16 @@
     (update-in [:profile :string :max_length] max (get-in p [:profile :string :max_length]))))
 
 
- ;;this is causing the stack overflow.
+ ;;this is causing the stack overflow...something to do with lazy sequences and thunking?
  (defn a_row [ar r]
    (map a_field ar r))
 
+
+ ;;try with loop instead of map...this seems to work.
+ (defn a_row_e [ar r]
+   (loop [cp ar c r res []]
+     ;(clojure.pprint/pprint cp)
+     (if cp (recur (next cp) (next r) (conj res (a_field (first cp) (first c)))) res)))
 
 
  ;;stack overflow when running lcoally or on cluster.
@@ -61,7 +67,8 @@
     rdd
     (spark/map #(first (csv/parse-csv %)))
     (spark/map profile_row)
-    (spark/reduce a_row)
+    (spark/reduce a_row_e)
+    ;(spark/collect)
     ))
 
 
