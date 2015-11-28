@@ -1,13 +1,36 @@
 (ns data-profile.core-test
-  (:require [clojure.test :refer :all]
-            [data-profile.core :refer :all]))
+  (:use clojure.test)
+  (:require [clojure.set]
+            [sparkling.core :as s]
+            [sparkling.conf :as conf]
+    ;; this is to have the reader macro sparkling/tuple defined
+            [sparkling.destructuring :as sd]
+            ))
 
-(deftest a-test
-  (testing "FIXME, I fail."
-    (is (= 0 1))))
+
+(deftest csv
+  (s/with-context
+    sc
+    (-> (conf/spark-conf)
+        (conf/set-sparkling-registrator)
+        (conf/set "spark.kryo.registrationRequired" "true")
+        (conf/master "local[*]")
+        (conf/app-name "api-test"))
+    (testing
+      (is (= 10
+      (->>
+        (s/text-file sc "resources/sample.csv")
+        (s/count)))))
+    (testing
+
+    ))
 
 
-def test-data2 [["548" "SOY MILK CASE" "UPC" "CTL BR" "0" "TOTAL" "1" "(AH)-Non Perishable" "96318" "(AH)-NATURAL ORGANIC" "92807" "(AH)-NATURAL ORGANIC" "93969" "(AH)-NATURAL BEVERAGE" "94666" "(AH)-NTRL NON DAIRY MILK" "94667" "(AH)-NTRL NON DIARY MILK" "" "4/9/08" "200815" "0" "N"] ["610" "SODA VENDING MACH" "UPC" "CTL BR" "0" "TOTAL" "1" "(AH)-Non Perishable" "92733" "(AH)-DSD" "92790" "(AH)-DSD BEVERAGE" "56" "(AH)-CARBONATED SOFT DRINK" "95114" "(AH)-CSD SINGLES" "95119" "(AH)-CSD SINGLE CAN" "" "10/8/07" "200741" "54.15" "Y"]])
+
+
+
+
+(def test-data2 [["548" "SOY MILK CASE" "UPC" "CTL BR" "0" "TOTAL" "1" "(AH)-Non Perishable" "96318" "(AH)-NATURAL ORGANIC" "92807" "(AH)-NATURAL ORGANIC" "93969" "(AH)-NATURAL BEVERAGE" "94666" "(AH)-NTRL NON DAIRY MILK" "94667" "(AH)-NTRL NON DIARY MILK" "" "4/9/08" "200815" "0" "N"] ["610" "SODA VENDING MACH" "UPC" "CTL BR" "0" "TOTAL" "1" "(AH)-Non Perishable" "92733" "(AH)-DSD" "92790" "(AH)-DSD BEVERAGE" "56" "(AH)-CARBONATED SOFT DRINK" "95114" "(AH)-CSD SINGLES" "95119" "(AH)-CSD SINGLE CAN" "" "10/8/07" "200741" "54.15" "Y"]])
 
 
 (def test-data3
@@ -35,31 +58,6 @@ def test-data2 [["548" "SOY MILK CASE" "UPC" "CTL BR" "0" "TOTAL" "1" "(AH)-Non 
  {:field "0", :profile {:date {:min -1, :max 1, :count 0}, :string {:max_length 1}, :integer {:count 1, :min 0N, :max 0N}}}
  {:field "N", :profile {:date {:min -1, :max 1, :count 0}, :string {:max_length 1}, :integer {:min 0, :max 0, :count 0}}}]
 
-[{:field "548", :profile {:date {:min -1, :max 1, :count 0}, :string {:max_length 3}, :integer {:count 1, :min 548N, :max 548N}}}
- {:field "SOY MILK CASE", :profile {:date {:min -1, :max 1, :count 0}, :string {:max_length 13}, :integer {:min 0, :max 0, :count 0}}}
- {:field "UPC", :profile {:date {:min -1, :max 1, :count 0}, :string {:max_length 3}, :integer {:min 0, :max 0, :count 0}}}
- {:field "CTL BR", :profile {:date {:min -1, :max 1, :count 0}, :string {:max_length 6}, :integer {:min 0, :max 0, :count 0}}}
- {:field "0", :profile {:date {:min -1, :max 1, :count 0}, :string {:max_length 1}, :integer {:count 1, :min 0N, :max 0N}}}
- {:field "TOTAL", :profile {:date {:min -1, :max 1, :count 0}, :string {:max_length 5}, :integer {:min 0, :max 0, :count 0}}}
- {:field "1", :profile {:date {:min -1, :max 1, :count 0}, :string {:max_length 1}, :integer {:count 1, :min 1N, :max 1N}}}
- {:field "(AH)-Non Perishable", :profile {:date {:min -1, :max 1, :count 0}, :string {:max_length 19}, :integer {:min 0, :max 0, :count 0}}}
- {:field "96318", :profile {:date {:min -1, :max 1, :count 0}, :string {:max_length 5}, :integer {:count 1, :min 96318N, :max 96318N}}}
- {:field "(AH)-NATURAL ORGANIC", :profile {:date {:min -1, :max 1, :count 0}, :string {:max_length 20}, :integer {:min 0, :max 0, :count 0}}}
- {:field "92807", :profile {:date {:min -1, :max 1, :count 0}, :string {:max_length 5}, :integer {:count 1, :min 92807N, :max 92807N}}}
- {:field "(AH)-NATURAL ORGANIC", :profile {:date {:min -1, :max 1, :count 0}, :string {:max_length 20}, :integer {:min 0, :max 0, :count 0}}}
- {:field "93969", :profile {:date {:min -1, :max 1, :count 0}, :string {:max_length 5}, :integer {:count 1, :min 93969N, :max 93969N}}}
- {:field "(AH)-NATURAL BEVERAGE", :profile {:date {:min -1, :max 1, :count 0}, :string {:max_length 21}, :integer {:min 0, :max 0, :count 0}}}
- {:field "94666", :profile {:date {:min -1, :max 1, :count 0}, :string {:max_length 5}, :integer {:count 1, :min 94666N, :max 94666N}}}
- {:field "(AH)-NTRL NON DAIRY MILK", :profile {:date {:min -1, :max 1, :count 0}, :string {:max_length 24}, :integer {:min 0, :max 0, :count 0}}}
- {:field "94667", :profile {:date {:min -1, :max 1, :count 0}, :string {:max_length 5}, :integer {:count 1, :min 94667N, :max 94667N}}}
- {:field "(AH)-NTRL NON DIARY MILK", :profile {:date {:min -1, :max 1, :count 0}, :string {:max_length 24}, :integer {:min 0, :max 0, :count 0}}}
- {:field "", :profile {:date {:min -1, :max 1, :count 0}, :string {:max_length 0}, :integer {:min 0, :max 0, :count 0}}}
- {:field "4/9/08", :profile {:date {:min -1, :max 1, :count 0}, :string {:max_length 6}, :integer {:min 0, :max 0, :count 0}}}
- {:field "200815", :profile {:date {:min -1, :max 1, :count 0}, :string {:max_length 6}, :integer {:count 1, :min 200815N, :max 200815N}}}
- {:field "0", :profile {:date {:min -1, :max 1, :count 0}, :string {:max_length 1}, :integer {:count 1, :min 0N, :max 0N}}}
- {:field "N", :profile {:date {:min -1, :max 1, :count 0}, :string {:max_length 1}, :integer {:min 0, :max 0, :count 0}}}]
-
-
 [{:field "821", :profile {:date {:min -1, :max 1, :count 0}, :string {:max_length 3}, :integer {:count 1, :min 821N, :max 821N}}}
  {:field "V SNGLE BOTTLE 20 OZ", :profile {:date {:min -1, :max 1, :count 0}, :string {:max_length 20}, :integer {:min 0, :max 0, :count 0}}}
  {:field "UPC", :profile {:date {:min -1, :max 1, :count 0}, :string {:max_length 3}, :integer {:min 0, :max 0, :count 0}}}
@@ -85,10 +83,5 @@ def test-data2 [["548" "SOY MILK CASE" "UPC" "CTL BR" "0" "TOTAL" "1" "(AH)-Non 
  {:field "N", :profile {:date {:min -1, :max 1, :count 0}, :string {:max_length 1}, :integer {:min 0, :max 0, :count 0}}}]])
 
 
-({:date {:min -1, :max 1, :count 0},
-  :string {:max_length 4},
-  :integer {:min 0, :max 4599N, :count 4}}
- {:date {:min -1, :max 1, :count 0},
-  :string {:max_length 14},
-  :integer {:min 0, :max 0, :count 0}}
- {:date {:min -1, :max 1, :count 0}, :string {:max_length 6}, :integer {:min -34444N, :max 3N, :count 4}})
+
+

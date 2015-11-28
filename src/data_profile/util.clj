@@ -5,9 +5,7 @@
             [sparkling.destructuring :as s-de]
             [clojure.string :as str]
             [clj-time.core :as t]
-            [clj-time.format :as f])
-
-  (:gen-class))
+            [clj-time.format :as f]))
 
 
 (defn make-spark-context []

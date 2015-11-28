@@ -50,7 +50,7 @@ spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-S
 13. finish implementing schema (e.g., date)  **DATE is COMPLETE**
 14. how to encode max_int in serialized schema?
 15. be sure to cache rdd for sequences of operations.
-16. do i need gen-class in util?
+16. do i need gen-class in util? **NO**
 17. re-name schemas, adopt a database/table convention.
 18. autogenerate schema after profiling.
 19. 
