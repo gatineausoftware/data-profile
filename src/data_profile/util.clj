@@ -3,7 +3,9 @@
             [sparkling.conf :as conf]
             [sparkling.core :as spark]
             [sparkling.destructuring :as s-de]
-            [clojure.string :as str])
+            [clojure.string :as str]
+            [clj-time.core :as t]
+            [clj-time.format :as f])
 
   (:gen-class))
 
@@ -16,6 +18,12 @@
 
 
 
+
+(def date-parser (f/formatter (t/default-time-zone) "YYYY-MM-dd" "YYYY/MM/dd" "MM/dd/yy" "MM/dd/yyyy"))
+
+(defn isDate? [x]
+  (some? (try (f/parse date-parser x)
+    (catch Exception e nil))))
 
 
 (defn is-integer? [x]

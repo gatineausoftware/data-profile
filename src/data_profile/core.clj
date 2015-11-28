@@ -5,9 +5,11 @@
               [sparkling.destructuring :as s-de]
               [clojure.string :as str]
               [clojure-csv.core :as csv]
-              [data-profile.schema :as schema])
+              [data-profile.schema :as schema]
+              [data-profile.localprofile :as lprofile])
   (:use       [data-profile.util]
-              [data-profile.profile])
+              [data-profile.profile]
+              )
   (:gen-class))
 
 ;; verifies that a columm satisfies schema, returns true or false
@@ -110,6 +112,7 @@
     "get-schema-errors" (get-schema-errors rdd (schema/get-schema (first args)))
     "check-schema" (check-schema rdd (schema/get-schema (first args)))
     "profile" (profile-rdd rdd)
+    "profile-l" (lprofile/profile-rdd-l rdd)
     "usage: [count, max-col-val, max-col-count, min-col-count, count-incomplete-rows] [n]")
    clojure.pprint/pprint)))
 

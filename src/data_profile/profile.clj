@@ -54,6 +54,7 @@
 
 
  ;;try with loop instead of map...this seems to work.
+ ;;note that the profile will be truncated to smallest row (i.e., if there is incomplete data)
  (defn a_row_e [ar r]
    (loop [cp ar c r res []]
      ;(clojure.pprint/pprint cp)
@@ -63,7 +64,7 @@
  ;;note that this causes a stack overflow if i reduce with a_row.  The fact that functions passed to spark/reduce
  ;;need to be commutative make this a lot more complicated than if doing it locally.  This might be a better approach.
  ;;take a sample of the data, bring it back to driver and then operate locally.   performance appears to be
- ;;quite bad.
+ ;;quite bad.  causes heap erorr on large data sets.
 
  (defn profile-rdd [rdd]
    (->>

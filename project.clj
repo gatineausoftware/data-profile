@@ -5,7 +5,8 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
  :dependencies [[org.clojure/clojure "1.6.0"]
                 [gorillalabs/sparkling "1.2.2-SNAPSHOT"]
-                [clojure-csv/clojure-csv "2.0.1"]]
+                [clojure-csv/clojure-csv "2.0.1"]
+                [clj-time "0.8.0"]]
 
             :aot [#".*" sparkling.serialization sparkling.destructuring]
             :main data-profile.core
