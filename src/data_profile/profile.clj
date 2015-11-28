@@ -57,11 +57,14 @@
  (defn a_row_e [ar r]
    (loop [cp ar c r res []]
      ;(clojure.pprint/pprint cp)
-     (if cp (recur (next cp) (next r) (conj res (a_field (first cp) (first c)))) res)))
+     (if cp (recur (next cp) (next c) (conj res (a_field (first cp) (first c)))) res)))
 
 
- ;;stack overflow when running lcoally or on cluster.
- ;;works on small data sets.
+ ;;note that this causes a stack overflow if i reduce with a_row.  The fact that functions passed to spark/reduce
+ ;;need to be commutative make this a lot more complicated than if doing it locally.  This might be a better approach.
+ ;;take a sample of the data, bring it back to driver and then operate locally.   performance appears to be
+ ;;quite bad.
+
  (defn profile-rdd [rdd]
    (->>
     rdd
