@@ -1,0 +1,60 @@
+;; Anything you type in here will be executed
+;; immediately with the results shown on the
+;; right.
+
+(ns data-profile.core
+  (:require   [clojure.string :as string]
+              [sparkling.conf :as conf]
+              [sparkling.core :as spark]
+              [sparkling.destructuring :as s-de]
+              [clojure.string :as str]
+              [clojure-csv.core :as csv]
+              [data-profile.schema :as schema]
+              [data-profile.localprofile :as lprofile]
+              [data-profile.profile :as profile]))
+
+(use 'data-profile.core :reload-all)
+;this works, but i can't do (spark/map #(first (csv/parse-csv %))
+
+(->>
+ (spark/text-file sc "resources/sample.csv")
+ (spark/collect)
+ (clojure.pprint/pprint))
+
+
+
+
+;this also works
+(->>
+  (spark/text-file sc "/Users/benmackenzie/Desktop/upcs.csv")
+  (spark/sample true 0.01 78)
+  (spark/collect)
+  (map #(first (csv/parse-csv %)))
+  (lprofile/profile-data)
+  (clojure.pprint/pprint))
+
+
+;this works.  note that this file does not indicate to genclasss.
+(lprofile/profile-rdd-l (spark/text-file sc "/Users/benmackenzie/Desktop/upcs.csv"))
+
+
+;;seems like i cannot pass functions defined in repl to spark.
+
+;;I added a function to core.clj, called (use 'data-profile.core :reload-all) ... doesn't work
+
+(->>
+  (spark/text-file sc "/Users/benmackenzie/Desktop/upcs.csv")
+  (spark/sample true 0.01 78)
+  (parse-csv)
+  (spark/collect)
+  (clojure.pprint/pprint))
+
+
+;;tried adding profile-rdd-ll to core.clj, then call
+
+(->>
+  (spark/text-file sc "/Users/benmackenzie/Desktop/upcs.csv")
+  (profile-rdd-ll))
+
+;;works...how is this different than above?
+
