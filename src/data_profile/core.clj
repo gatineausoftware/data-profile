@@ -112,7 +112,7 @@
     "get-schema-errors" (get-schema-errors rdd (schema/get-schema (first args)))
     "check-schema" (check-schema rdd (schema/get-schema (first args)))
     "profile" (profile-rdd rdd)
-    "profile-l" (lprofile/profile-rdd-l rdd)
+    "profile-l" (lprofile/profile-rdd-l 1 rdd)
     "usage: [count, max-col-val, max-col-count, min-col-count, count-incomplete-rows] [n]")
    clojure.pprint/pprint)))
 

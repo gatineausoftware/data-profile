@@ -3,12 +3,162 @@
   (:require [clojure.set]
             [sparkling.core :as s]
             [sparkling.conf :as conf]
-    ;; this is to have the reader macro sparkling/tuple defined
             [sparkling.destructuring :as sd]
+            [data-profile.localprofile :as lp]
+            [data-profile.util :as u]
             ))
 
 
-(deftest csv
+(deftest utilunittest
+  (testing
+    (is (some? (u/getDate "2015/10/31"))))
+  (testing
+    (is (some? (u/getDate "10/31/15"))))
+
+  )
+
+
+(deftest profileunittest
+  (testing
+    (is (=
+         (->
+          lp/a
+          (assoc-in [:date :count] 1))
+          (lp/profile-date "2015/10/31" lp/a))))
+  (testing
+    (is (=
+         (->
+          lp/a
+          (assoc-in [:date :count] 1))
+          (lp/profile-date "2015-10-31" lp/a))))
+
+
+  (testing
+    (is (=
+         (->
+          lp/a
+          (assoc-in [:integer :count] 1)
+          (assoc-in [:integer :max] 1001))
+          (lp/profile-integer "1001" lp/a))))
+
+  (testing
+    (is (=
+         (->
+          lp/a
+          (assoc-in [:string :max_length] 4))
+          (lp/profile-string "1001" lp/a))))
+
+
+  (testing
+    (is (=
+         (->
+          lp/a
+          (assoc-in [:integer :count] 1)
+          (assoc-in [:integer :max] 42)
+          (assoc-in [:string :max_length] 2))
+          (lp/profile-column lp/a "42"))))
+  )
+
+
+
+(def row1 ["548" "SOY MILK CASE" "UPC" "CTL BR" "0" "TOTAL" "1" "(AH)-Non Perishable" "96318" "(AH)-NATURAL ORGANIC" "92807" "(AH)-NATURAL ORGANIC" "93969" "(AH)-NATURAL BEVERAGE" "94666" "(AH)-NTRL NON DAIRY MILK" "94667" "(AH)-NTRL NON DIARY MILK" "" "4/9/08" "200815" "0" "N"])
+
+
+
+(def result1 '({:date {:min -1, :max 1, :count 0},
+  :string {:max_length 4},
+  :integer {:min 0, :max 2097N, :count 10},
+  :missing 0}
+ {:date {:min -1, :max 1, :count 0},
+  :string {:max_length 23},
+  :integer {:min 0, :max 0, :count 0},
+  :missing 0}
+ {:date {:min -1, :max 1, :count 0},
+  :string {:max_length 3},
+  :integer {:min 0, :max 0, :count 0},
+  :missing 0}
+ {:date {:min -1, :max 1, :count 0},
+  :string {:max_length 15},
+  :integer {:min 0, :max 0, :count 0},
+  :missing 0}
+ {:date {:min -1, :max 1, :count 0},
+  :string {:max_length 1},
+  :integer {:min 0N, :max 0N, :count 10},
+  :missing 0}
+ {:date {:min -1, :max 1, :count 0},
+  :string {:max_length 5},
+  :integer {:min 0, :max 0, :count 0},
+  :missing 0}
+ {:date {:min -1, :max 1, :count 0},
+  :string {:max_length 1},
+  :integer {:min 0, :max 1N, :count 10},
+  :missing 0}
+ {:date {:min -1, :max 1, :count 0},
+  :string {:max_length 19},
+  :integer {:min 0, :max 0, :count 0},
+  :missing 0}
+ {:date {:min -1, :max 1, :count 0},
+  :string {:max_length 5},
+  :integer {:min 0, :max 96318N, :count 10},
+  :missing 0}
+ {:date {:min -1, :max 1, :count 0},
+  :string {:max_length 20},
+  :integer {:min 0, :max 0, :count 0},
+  :missing 0}
+ {:date {:min -1, :max 1, :count 0},
+  :string {:max_length 5},
+  :integer {:min 0, :max 92807N, :count 10},
+  :missing 0}
+ {:date {:min -1, :max 1, :count 0},
+  :string {:max_length 20},
+  :integer {:min 0, :max 0, :count 0},
+  :missing 0}
+ {:date {:min -1, :max 1, :count 0},
+  :string {:max_length 5},
+  :integer {:min 0, :max 93969N, :count 10},
+  :missing 0}
+ {:date {:min -1, :max 1, :count 0},
+  :string {:max_length 26},
+  :integer {:min 0, :max 0, :count 0},
+  :missing 0}
+ {:date {:min -1, :max 1, :count 0},
+  :string {:max_length 5},
+  :integer {:min 0, :max 95114N, :count 10},
+  :missing 0}
+ {:date {:min -1, :max 1, :count 0},
+  :string {:max_length 24},
+  :integer {:min 0, :max 0, :count 0},
+  :missing 0}
+ {:date {:min -1, :max 1, :count 0},
+  :string {:max_length 5},
+  :integer {:min 0, :max 95119N, :count 10},
+  :missing 0}
+ {:date {:min -1, :max 1, :count 0},
+  :string {:max_length 24},
+  :integer {:min 0, :max 0, :count 0},
+  :missing 0}
+ {:date {:min -1, :max 1, :count 0},
+  :string {:max_length 0},
+  :integer {:min 0, :max 0, :count 0},
+  :missing 10}
+ {:date {:min -1, :max 1, :count 10},
+  :string {:max_length 7},
+  :integer {:min 0, :max 0, :count 0},
+  :missing 0}
+ {:date {:min -1, :max 1, :count 0},
+  :string {:max_length 6},
+  :integer {:min 0, :max 200819N, :count 10},
+  :missing 0}
+ {:date {:min -1, :max 1, :count 0},
+  :string {:max_length 1},
+  :integer {:min 0N, :max 0N, :count 10},
+  :missing 0}
+ {:date {:min -1, :max 1, :count 0},
+  :string {:max_length 1},
+  :integer {:min 0, :max 0, :count 0},
+  :missing 0}))
+
+(deftest profiletest
   (s/with-context
     sc
     (-> (conf/spark-conf)
@@ -22,6 +172,11 @@
         (s/text-file sc "resources/sample.csv")
         (s/count)))))
     (testing
+      (is (= result1
+        (->>
+        (s/text-file sc "resources/sample.csv")
+        (lp/profile-rdd-l 1)
+        ))))
 
     ))
 
@@ -30,7 +185,8 @@
 
 
 
-(def test-data2 [["548" "SOY MILK CASE" "UPC" "CTL BR" "0" "TOTAL" "1" "(AH)-Non Perishable" "96318" "(AH)-NATURAL ORGANIC" "92807" "(AH)-NATURAL ORGANIC" "93969" "(AH)-NATURAL BEVERAGE" "94666" "(AH)-NTRL NON DAIRY MILK" "94667" "(AH)-NTRL NON DIARY MILK" "" "4/9/08" "200815" "0" "N"] ["610" "SODA VENDING MACH" "UPC" "CTL BR" "0" "TOTAL" "1" "(AH)-Non Perishable" "92733" "(AH)-DSD" "92790" "(AH)-DSD BEVERAGE" "56" "(AH)-CARBONATED SOFT DRINK" "95114" "(AH)-CSD SINGLES" "95119" "(AH)-CSD SINGLE CAN" "" "10/8/07" "200741" "54.15" "Y"]])
+
+
 
 
 (def test-data3

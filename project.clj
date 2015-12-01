@@ -11,5 +11,6 @@
             :aot [#".*" sparkling.serialization sparkling.destructuring]
             :main data-profile.core
             :profiles {:provided {:dependencies [[org.apache.spark/spark-core_2.10 "1.3.1"]]}
-                       :dev {:plugins [[lein-dotenv "RELEASE"]]}})
+                       :dev {:plugins [[lein-dotenv "RELEASE"]
+                                       [lein-midje "3.2"]]}})
 

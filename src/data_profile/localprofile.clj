@@ -11,7 +11,7 @@
 ;;this version of profile just uses spark to pull back a sample of data.  profiling is then executed in driver
 
 
-
+ ;need better name
 
  (def a {:missing 0 :date {:count 0 :min -1 :max 1} :integer {:count 0 :min 0 :max 0} :string {:max_length 0}})
 
@@ -37,11 +37,12 @@
     c-profile))
 
 
+
  (defn profile-string [column c-profile]
    (update-in c-profile [:string :max_length] max (count column)))
 
  (defn profile-date [column c-profile]
-   (if (isDate? column)
+   (if-let [d (getDate column)]
      (update-in c-profile [:date :count] + 1) c-profile))
 
  (defn profile-column [c-profile column]
@@ -63,12 +64,12 @@
 
 
   (defn profile-data [rows]
-    (reduce profile-row (repeat 23 a) rows))
+    (reduce profile-row (repeat (get-num-columns rows) a) rows))
 
-  (defn profile-rdd-l [rdd]
+  (defn profile-rdd-l [sample rdd]
    (->>
     rdd
-    (spark/sample true 0.01 78)
+    (spark/sample true sample 78)
     (spark/collect)
     (map #(first (csv/parse-csv %)))
     (profile-data)

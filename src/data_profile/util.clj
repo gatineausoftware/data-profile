@@ -16,10 +16,11 @@
 
 
 
+;tried to include "MM/dd/yy" but it didn't work
+(def date-parser (f/formatter (t/default-time-zone) "YYYY-MM-dd" "YYYY/MM/dd" "MM/dd/yyyy"))
 
-(def date-parser (f/formatter (t/default-time-zone) "YYYY-MM-dd" "YYYY/MM/dd" "MM/dd/yy" "MM/dd/yyyy"))
 
-(defn isDate? [x]
+(defn getDate [x]
   (some? (try (f/parse date-parser x)
     (catch Exception e nil))))
 
