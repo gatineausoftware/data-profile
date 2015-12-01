@@ -42,7 +42,7 @@
    (update-in c-profile [:string :max_length] max (count column)))
 
  (defn profile-date [column c-profile]
-   (if-let [d (getDate column)]
+   (if (isDate? column)
      (update-in c-profile [:date :count] + 1) c-profile))
 
  (defn profile-column [c-profile column]

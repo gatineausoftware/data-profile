@@ -20,9 +20,10 @@
 (def date-parser (f/formatter (t/default-time-zone) "YYYY-MM-dd" "YYYY/MM/dd" "MM/dd/yyyy"))
 
 
-(defn getDate [x]
+(defn isDate? [x]
   (some? (try (f/parse date-parser x)
     (catch Exception e nil))))
+
 
 
 (defn is-integer? [x]

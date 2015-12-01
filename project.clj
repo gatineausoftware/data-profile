@@ -6,11 +6,11 @@
  :dependencies [[org.clojure/clojure "1.6.0"]
                 [gorillalabs/sparkling "1.2.2-SNAPSHOT"]
                 [clojure-csv/clojure-csv "2.0.1"]
-                [clj-time "0.8.0"]]
+                [clj-time "0.8.0"]
+                ]
 
             :aot [#".*" sparkling.serialization sparkling.destructuring]
             :main data-profile.core
             :profiles {:provided {:dependencies [[org.apache.spark/spark-core_2.10 "1.3.1"]]}
-                       :dev {:plugins [[lein-dotenv "RELEASE"]
-                                       [lein-midje "3.2"]]}})
+                       :dev {:plugins [[lein-dotenv "RELEASE"]]}})
 

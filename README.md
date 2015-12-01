@@ -20,7 +20,7 @@ lein uberjar
 #### submit to spark cluster
 spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-SNAPSHOT-standalone.jar [command] [directory] [additional arguments]
 
-1. in this case cluster is AWS EMR cluster. 
+1. in this case cluster is AWS EMR cluster.
 2. directory can be s3 or hdfs.
 
 ### Examples
@@ -35,13 +35,10 @@ spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-S
 
 
 ### to do
-1. use if-let construction  **Partially complete**
-2. try to dispatch functions rather than using case?
+2. do i need a -main?  or can I run arbitrary functions on cluster?
 3. do functions need to be compiled to execute on cluster?
-4. build some test cases.
-5. get midje working.
-6. get repl development working
-7. build function to get distribution of all columns (int, non int, string date etc…)  [run a map that creates a structure containing the data plus a collection of stats…then run reduce over it, i.e., overcome spark/reduce limitations]  **DONE**
+5. get midje working. ** not working....problem with AOT? **
+6. get repl development working ** Yes.  however cannot submit functions defined in REPL**
 8. compare performance of clojure vs scala.
 9. build function that outputs 'good' data and 'bad' data in separate locations.
 10. clean up main loop.
@@ -50,7 +47,5 @@ spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-S
 13. finish implementing schema (e.g., date)  **DATE is COMPLETE**
 14. how to encode max_int in serialized schema?
 15. be sure to cache rdd for sequences of operations.
-16. do i need gen-class in util? **NO**
 17. re-name schemas, adopt a database/table convention.
 18. autogenerate schema after profiling.
-19. 
