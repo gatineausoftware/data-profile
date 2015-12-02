@@ -11,7 +11,8 @@
   (:use       [data-profile.util]
               [data-profile.profile]
               [data-profile.schemavalidation]
-              ))
+              )
+  (:gen-class))
 
 
 
