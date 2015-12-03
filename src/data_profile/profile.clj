@@ -62,7 +62,7 @@
     (profile-decimal column)
     ))
 
-
+  ;;this also can blow up if sample is large enough
  (defn profile-row [profile row]
    (map profile-column profile row))
 
@@ -79,7 +79,7 @@
     rdd
     (spark/sample true sample 78)
     (spark/collect)
-    (map #(first (csv/parse-csv %)))
+    (map #(first (csv/parse-csv % :delimiter \|)))
     (profile-data)
     ))
 
