@@ -17,10 +17,7 @@
 
  (def a {:missing 0 :date {:count 0 :min -1 :max 1} :integer {:count 0 :min 0 :max 0} :string {:max_length 0} :decimal {:count 0 :max_scale 0}})
 
- (defn  get-integer [s]
-    (try
-      (bigint s)
-      (catch Exception e nil)))
+
 
  ;;count column is counting size of column...if it is zero, it's missing
  (defn profile-missing [column c-profile]
@@ -29,7 +26,7 @@
 
 
  (defn profile-integer [column c-profile]
-  (if-let [int-col (get-integer column)]
+  (if-let [int-col (getInteger column)]
    (->
       c-profile
      (update-in [:integer :count] + 1)
@@ -53,7 +50,7 @@
       c-profile
       (update-in [:decimal :count] + 1)
       (update-in [:decimal :max_scale] max (.scale d))
-      )))
+      ) c-profile))
 
  (defn profile-column [c-profile column]
    (->>
@@ -62,7 +59,7 @@
     (profile-integer column)
     (profile-string column)
     (profile-date column)
-  ;  (profile-decimal column)
+    (profile-decimal column)
     ))
 
 

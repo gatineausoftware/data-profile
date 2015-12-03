@@ -17,12 +17,6 @@
           p/a
           (assoc-in [:date :count] 1))
           (p/profile-date "2015/10/31" p/a))))
-  (testing
-    (is (=
-         (->
-          p/a
-          (assoc-in [:date :count] 1))
-          (p/profile-date "2015-10-31" p/a))))
 
 
   (testing
@@ -32,6 +26,12 @@
           (assoc-in [:integer :count] 1)
           (assoc-in [:integer :max] 1001))
           (p/profile-integer "1001" p/a))))
+
+
+  (testing
+    (is (=
+         p/a
+          (p/profile-date "42" p/a))))
 
   (testing
     (is (=
@@ -45,18 +45,32 @@
     (is (=
          (->
           p/a
+          (assoc-in [:decimal :count] 1)
+          (assoc-in [:decimal :max_scale] 2))
+          (p/profile-decimal "2.13" p/a))))
+
+  (testing
+    (is (=
+         p/a
+        (p/profile-decimal "not a number" p/a))))
+
+  (testing
+    (is (=
+         (->
+          p/a
           (assoc-in [:integer :count] 1)
           (assoc-in [:integer :max] 42)
-          (assoc-in [:string :max_length] 2))
+          (assoc-in [:string :max_length] 2)
+          (assoc-in [:decimal :count] 1))
           (p/profile-column p/a "42"))))
+
   )
 
 
 ;;problems: "15,000" is not parsing as an int
-;;is 1004N a problem?
-;;not running decimal yet
+
 (def testdata2
-  [["1001" "atlanta" "2015-10-31" "2.01" "15,000"]
+  [["1001" "atlanta" "2015-10-31" "2.01" "15000"]
   ["1002" "chicago" "2015-01-19" "3.2"  ""]])
 
 (def testresult2
@@ -81,16 +95,14 @@
          p/a
          (assoc-in [:string :max_length] 4)
          (assoc-in [:decimal :count] 2)
-         (assoc-in [:decimal :max_scale] 2)
-         )
+         (assoc-in [:decimal :max_scale] 2))
 
          (->
           p/a
-         (assoc-in [:string :max_length] 6)
+         (assoc-in [:string :max_length] 5)
          (assoc-in [:integer :count] 1)
          (assoc-in [:integer :max] 15000)
-         (assoc-in [:decimal :count] 2)
-         (assoc-in [:decimal :max_scale] 0)
+         (assoc-in [:decimal :count] 1)
          (assoc-in [:missing] 1)
         )))
 

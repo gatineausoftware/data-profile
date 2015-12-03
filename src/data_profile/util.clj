@@ -19,7 +19,7 @@
 ;tried to include "MM/dd/yy" but it didn't work
 (def date-parser (f/formatter (t/default-time-zone) "YYYY-MM-dd" "YYYY/MM/dd" "MM/dd/yyyy"))
 
-
+;;note it is important that the try return nil, not false, because of some?
 (defn isDate? [x]
   (some? (try (f/parse date-parser x)
     (catch Exception e nil))))
@@ -31,14 +31,12 @@
     (catch Exception e false)))
 
 
-;;return 0 if field is not an integer
 (defn  getInteger [s]
     (try
-      (bigint s)
-      (catch Exception e 0)))
+      (int (bigint s))
+      (catch Exception e nil)))
 
 
-;note that this works differently than getInteger...need to make this consistent
 (defn getDecimal [s]
   (try
     (bigdec s)
@@ -99,7 +97,7 @@
   (->>
     rdd
     (spark/map (partial getcolumn n))
-    (spark/map getInteger)
+    (spark/map #(or 0 (getInteger %)))
     (spark/reduce max)))
 
 
