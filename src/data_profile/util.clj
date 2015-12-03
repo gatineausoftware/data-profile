@@ -26,24 +26,23 @@
 
 
 
-(defn is-integer? [x]
+(defn isInteger? [x]
    (try (bigint x)
     (catch Exception e false)))
 
 
 ;;return 0 if field is not an integer
-(defn  string->integer [s]
+(defn  getInteger [s]
     (try
       (bigint s)
       (catch Exception e 0)))
 
-;;this doesn't work.  returns the whole file
-(defn get-sample [sc filename]
-  (->>
-   (spark/text-file sc filename)
-   (spark/sample true 10 7)
-   (spark/collect)))
 
+;note that this works differently than getInteger...need to make this consistent
+(defn getDecimal [s]
+  (try
+    (bigdec s)
+    (catch Exception e nil)))
 
 
 ;;skip incomplete records...or should i just filter first?
@@ -100,7 +99,7 @@
   (->>
     rdd
     (spark/map (partial getcolumn n))
-    (spark/map string->integer)
+    (spark/map getInteger)
     (spark/reduce max)))
 
 

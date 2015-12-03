@@ -1,0 +1,13 @@
+[
+{:name period_cd :type :string}
+{:name cmbo_cd :type :string}
+{:name scc_cd :type :string}
+{:name daypart_cd :type :string}
+{:name wowe_cd :type :string}
+{:name avg_chk :type :decimal}
+{:name avg_chk_ptchg :type :decimal}
+{:name eater_occ :type :integer}
+{:name eater_occ_ptchg :type :decimal}
+{:name incidence :type :decimal}
+{:name incidence_ptchg :type :decimal}
+]

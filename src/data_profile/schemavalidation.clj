@@ -14,10 +14,10 @@
 ;should use if-let here
  (defn columm-satisfies-schema? [a b]
    (case (:type a)
-     :integer (if (is-integer? b)
+     :integer (if (isInteger? b)
                 (and (<= (bigint b) (:max a) ) (>= (bigint b) (:min a)))
                 false)
-     :numeric (if (is-integer? b)
+     :numeric (if (isInteger? b)
                 true)
      :varchar (if (<= (count b) (:size a)) true false)
      :date (isDate? b)
@@ -46,8 +46,8 @@
 
 
   (defn check-integer [x min max]
-    (if (is-integer? x)
-          (if (or (< (string->integer x) min) (> (string->integer x) max))
+    (if (isInteger? x)
+          (if (or (< (getInteger x) min) (> (getInteger x) max))
             {:error :int_range} {:error :none}) {:error :non_int}))
 
 
@@ -56,7 +56,7 @@
         {:error :varchar_range} {:error :none}))
 
   (defn check-numeric [x]
-    (if (is-integer? x)
+    (if (isInteger? x)
       {:error :none} {:error :non_numeric}))
 
 
