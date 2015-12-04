@@ -32,7 +32,7 @@
     "write-bad-data" (write-bad-data rdd (schema/get-schema (first args)) (second args))
     "get-schema-errors" (get-schema-errors rdd (schema/get-schema (first args)))
     "check-schema" (check-schema rdd (schema/get-schema (first args)))
-    "profile" (profile/profile (bigdec (first args)) rdd)
+    "profile" (profile/profile rdd args)
     "cleanse" (cleanse/cleanse rdd (schema/get-schema (first args)) (second args))
     "usage: [count, max-col-val, max-col-count, min-col-count, count-incomplete-rows] [n]")
    clojure.pprint/pprint)))

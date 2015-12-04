@@ -6,6 +6,6 @@
 ))
 
 
-(deftest test1
-  (testing
-    (schema/get-schema ahold.schema)
+;(deftest test1
+ ; (testing
+  ;  (schema/get-schema ahold.schema)

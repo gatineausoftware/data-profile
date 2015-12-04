@@ -84,6 +84,7 @@
 
 
   (defn profile-with-options [rdd {:keys [delimiter sample]}]
+    (clojure.pprint/pprint (str "the delimiter is: " delimiter))
    (->>
     rdd
     (spark/sample true sample 78)
@@ -92,8 +93,18 @@
     (profile-data)
     ))
 
-  (defn profile [rdd & {:as opts}]
-    (profile-with-options rdd (merge {:sample 1 :delimiter \,} opts)))
+
+
+  ;;this is a mess....
+  ;;need to convert string to char...
+  (defn profile [rdd args]
+    (let [opts
+          (->
+           {}
+           (assoc-in [:sample] (bigdec (first args)))
+           (assoc-in [:delimiter] (first (seq (second args)))))]
+
+      (profile-with-options rdd (merge {:sample 1 :delimiter \,} opts))))
 
 
 
