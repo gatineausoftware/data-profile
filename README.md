@@ -34,17 +34,28 @@ spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-S
 2. spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-SNAPSHOT-standalone.jar profile yourfile.csv
 
 
+### profile notes:
+- migrate to profile (c) format.
+- calculate % for different types?
+- infer delimter?
+- commas in integers (or maybe a general numeric category?)
+- max and min for decimals
+- fix max and min initial values
+- create a schema based on profile.
+
+
+
 ### to do
 2. do i need a -main?  or can I run arbitrary functions on cluster?
 3. do functions need to be compiled to execute on cluster?
 5. get midje working. ** not working....problem with AOT? **
 6. get repl development working ** Yes.  however cannot submit functions defined in REPL**
 8. compare performance of clojure vs scala.
-9. build function that outputs 'good' data and 'bad' data in separate locations.
+9. build function that outputs 'good' data and 'bad' data in separate locations. ** DONE, except need to dig into write-csv, adds extra blank lines **
 10. clean up main loop.
 11. add more metadata to schema, e.g., how is file delimited (comma, tab, | etc…)
 12. read data from other file formats (ORC, Parquet?  Spark supports this, but is it realistic for raw data to come in in these formats?)
-13. finish implementing schema (e.g., date)  **DATE is COMPLETE**
+13. finish implementing schema (e.g., date)  **Done**
 14. how to encode max_int in serialized schema?
 15. be sure to cache rdd for sequences of operations.
 17. re-name schemas, adopt a database/table convention.

@@ -74,7 +74,7 @@
   ["1002" "chicago" "2015-01-19" "3.2"  ""]])
 
 (def testresult2
-   (list (->
+   (vector (->
          p/a
          (assoc-in [:string :max_length] 4)
          (assoc-in [:integer :count] 2)
@@ -117,9 +117,21 @@
         ))))
 
 
+(def testdata3
+  [["1001" "atlanta" "2015-10-31" "2.01" "15000"]
+   ["1002" "chicago" "2015-01-19" "3.2"  ""]
+   ["1000" "bad"]])
+
+(deftest profiletest3
+  (testing
+    (is (=
+         (p/profile-data testdata3)
+         testresult2
+        ))))
 
 
-(deftest profiletest
+
+(deftest profiletest4
   (s/with-context
     sc
     (-> (conf/spark-conf)
@@ -134,9 +146,9 @@
         (s/count)))))
     (testing
       (is (= 23
-        (->>
+        (->
         (s/text-file sc "resources/sample.csv")
-        (p/profile 1)
+        (p/profile)
         count
         ))))))
 

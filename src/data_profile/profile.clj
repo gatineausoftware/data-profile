@@ -17,6 +17,11 @@
 
  (def a {:missing 0 :date {:count 0 :min -1 :max 1} :integer {:count 0 :min 0 :max 0} :string {:max_length 0} :decimal {:count 0 :max_scale 0}})
 
+ (def b {:count 0 :missing 0 :max_lenght 0 :date {:count 0 :min -1 :max 1} :integer {:count 0 :min 0 :max 0} :decimal {:count 0 :max_scale 0}})
+
+ (def c {:count 0 :missing 0 :max_length 0
+         :numeric {:num_integer 0 :num_decimal 0 :max 0 :min 0 :max_scale 0}
+         :date {:count 0 :earliest 0 :latest 0}})
 
 
  ;;count column is counting size of column...if it is zero, it's missing
@@ -62,9 +67,12 @@
     (profile-decimal column)
     ))
 
-  ;;this also can blow up if sample is large enough
- (defn profile-row [profile row]
-   (map profile-column profile row))
+
+ (defn l-profile-row [profile row]
+   (if (not= (count profile) (count row)) profile
+     (loop [cp profile c row res []]
+       (if cp (recur (next cp) (next c) (conj res (profile-column (first cp) (first c)))) res))))
+
 
   ;;should probably get a distribution of row size and take the most common...note that hcat client just takes the max
  (defn get-num-columns [rows]
@@ -72,16 +80,23 @@
 
   ;;initialize max and min with first row?
   (defn profile-data [rows]
-    (reduce profile-row (repeat (get-num-columns rows) a) rows))
+    (reduce l-profile-row (repeat (get-num-columns rows) a) rows))
 
-  (defn profile [sample rdd]
+
+  (defn profile-with-options [rdd {:keys [delimiter sample]}]
    (->>
     rdd
     (spark/sample true sample 78)
     (spark/collect)
-    (map #(first (csv/parse-csv % :delimiter \|)))
+    (map #(first (csv/parse-csv % :delimiter delimiter)))
     (profile-data)
     ))
 
+  (defn profile [rdd & {:as opts}]
+    (profile-with-options rdd (merge {:sample 1 :delimiter \,} opts)))
 
 
+
+ ;;this also can blow up if sample is large enough
+ ;;(defn profile-row [profile row]
+ ;;(map profile-column profile row))
