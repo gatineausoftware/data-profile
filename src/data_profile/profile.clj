@@ -84,7 +84,6 @@
 
 
   (defn profile-with-options [rdd {:keys [delimiter sample]}]
-    (clojure.pprint/pprint (str "the delimiter is: " delimiter))
    (->>
     rdd
     (spark/sample true sample 78)
@@ -108,6 +107,13 @@
 
 
 
+
+
  ;;this also can blow up if sample is large enough
  ;;(defn profile-row [profile row]
  ;;(map profile-column profile row))
+ ;;try (dorun (map profile-column row)) instead?
+
+
+
+
