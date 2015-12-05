@@ -73,6 +73,8 @@
             (check-schema (spark/text-file sc (second arguments)) (schema/get-schema (nth arguments 2)))))
      (clojure.pprint/pprint))))
 
+
+
 (defn -kmain
   [command filename & args]
   (let [sc (make-spark-context)
