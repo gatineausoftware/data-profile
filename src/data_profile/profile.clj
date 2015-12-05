@@ -17,7 +17,6 @@
 
  (def a {:missing 0 :date {:count 0 :min -1 :max 1} :integer {:count 0 :min 0 :max 0} :string {:max_length 0} :decimal {:count 0 :max_scale 0}})
 
- (def b {:count 0 :missing 0 :max_lenght 0 :date {:count 0 :min -1 :max 1} :integer {:count 0 :min 0 :max 0} :decimal {:count 0 :max_scale 0}})
 
  (def c {:count 0 :missing 0 :max_length 0
          :numeric {:num_integer 0 :num_decimal 0 :max 0 :min 0 :max_scale 0}
