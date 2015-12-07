@@ -9,6 +9,15 @@
 
 
 
+
+
+(defn count-num-records [rdd]
+   (->> rdd
+         spark/count
+    ))
+
+
+
  (def a {:count 0 :missing 0 :max_length 0
          :numeric {:count 0 :integer_count 0  :min :none :max :none :min_scale 0 :max_scale 0}
          :date {:count 0 :earliest 0 :latest 0}})
@@ -81,7 +90,7 @@
 
 
 
-  (defn profile-with-options [rdd {:keys [delimiter sample]}]
+  (defn profile [rdd {:keys [delimiter sample]}]
    (->>
     rdd
     (spark/sample true sample 78)
@@ -91,24 +100,6 @@
     ))
 
 
-
-  ;;this is a mess....
-  ;;need to convert string to char...
-  (defn profile [rdd args]
-    (let [opts
-          (->
-           {}
-           (assoc-in [:sample] (bigdec (first args)))
-           (assoc-in [:delimiter] (first (seq (second args)))))]
-
-      (profile-with-options rdd (merge {:sample 1 :delimiter \,} opts))))
-
-
-
-(defn count-num-records [rdd]
-   (->> rdd
-         spark/count
-    ))
 
 
 

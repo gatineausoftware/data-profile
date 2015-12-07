@@ -70,7 +70,7 @@
     (->>
     (case (first arguments)
       "count" (profile/count-num-records (spark/text-file sc (second arguments)))
-      "profile" (profile/profile-with-options (spark/text-file sc (second arguments)) options)
+      "profile" (profile/profile (spark/text-file sc (second arguments)) options)
       "check-schema"
       (if
        (< (count arguments) 3)

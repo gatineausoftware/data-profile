@@ -161,7 +161,7 @@
         (->
         (s/text-file sc "resources/sample.csv")
 
-        (p/profile-with-options {:sample 1 :delimiter \,})
+        (p/profile {:sample 1 :delimiter \,})
         count
         ))))))
 
