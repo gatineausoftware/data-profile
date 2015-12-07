@@ -66,7 +66,7 @@
     (if (isInteger? x)
       {:error :none} {:error :non_numeric}))
 
-
+  ;;add decimal
   (defn validate-field [a b]
     (let [f {:name (:name a) :value b}]
 

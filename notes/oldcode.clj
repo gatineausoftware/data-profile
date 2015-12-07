@@ -100,3 +100,21 @@
   ;    (loop [cp profile c row res []]
    ;    (if cp (recur (next cp) (next c) (conj res (profile-column (first cp) (first c)))) res))))
 
+
+
+
+
+  (case command
+    "count" (count-num-records rdd)
+    "max-col-val" (max-col-val rdd (bigint (first args)))
+    "max-col-count" (get-max-columns rdd)
+    "min-col-count" (get-min-columns rdd)
+    "count-incomplete-rows" (count-incomplete-records rdd (bigint (first args)))
+    "get-incomplete-records" (get-incomplete-records rdd (bigint (first args)))
+    "get-num-col-dist" (get-num-col-dist rdd)
+    "write-bad-data" (write-bad-data rdd (schema/get-schema (first args)) (second args))
+    "get-schema-errors" (get-schema-errors rdd (schema/get-schema (first args)))
+    "check-schema" (check-schema rdd (schema/get-schema (first args)))
+    "profile" (profile/profile rdd args)
+    "cleanse" (cleanse/cleanse rdd (schema/get-schema (first args)) (second args))
+    "usage: [count, max-col-val, max-col-count, min-col-count, count-incomplete-rows] [n]")
