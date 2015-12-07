@@ -14,6 +14,11 @@
               )
   (:gen-class))
 
+(defn make-spark-context []
+  (let [c (-> (conf/spark-conf)
+              (conf/master "local[*]")
+              (conf/app-name "data-profile"))]
+    (spark/spark-context c)))
 
 
 (def cli-options
@@ -64,7 +69,7 @@
       errors (exit 1 (error-msg errors)))
     (->>
     (case (first arguments)
-      "count" (count-num-records (spark/text-file sc (second arguments)))
+      "count" (profile/count-num-records (spark/text-file sc (second arguments)))
       "profile" (profile/profile-with-options (spark/text-file sc (second arguments)) options)
       "check-schema"
       (if
@@ -73,28 +78,6 @@
             (check-schema (spark/text-file sc (second arguments)) (schema/get-schema (nth arguments 2)))))
      (clojure.pprint/pprint))))
 
-
-
-(defn -kmain
-  [command filename & args]
-  (let [sc (make-spark-context)
-        rdd (spark/text-file sc filename)]
-  (->>
-  (case command
-    "count" (count-num-records rdd)
-    "max-col-val" (max-col-val rdd (bigint (first args)))
-    "max-col-count" (get-max-columns rdd)
-    "min-col-count" (get-min-columns rdd)
-    "count-incomplete-rows" (count-incomplete-records rdd (bigint (first args)))
-    "get-incomplete-records" (get-incomplete-records rdd (bigint (first args)))
-    "get-num-col-dist" (get-num-col-dist rdd)
-    "write-bad-data" (write-bad-data rdd (schema/get-schema (first args)) (second args))
-    "get-schema-errors" (get-schema-errors rdd (schema/get-schema (first args)))
-    "check-schema" (check-schema rdd (schema/get-schema (first args)))
-    "profile" (profile/profile rdd args)
-    "cleanse" (cleanse/cleanse rdd (schema/get-schema (first args)) (second args))
-    "usage: [count, max-col-val, max-col-count, min-col-count, count-incomplete-rows] [n]")
-   clojure.pprint/pprint)))
 
 
 

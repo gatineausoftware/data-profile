@@ -9,27 +9,12 @@
 
 
 
- (defn pmin [a b]
-   (cond
-    (= a :none) b
-    (= b :none) a
-    :else (min a b)))
-
-
-
- (defn pmax [a b]
-   (cond
-    (= a :none) b
-    (= b :none) a
-    :else (max a b)))
-
-
  (def a {:count 0 :missing 0 :max_length 0
          :numeric {:count 0 :integer_count 0  :min :none :max :none :min_scale 0 :max_scale 0}
          :date {:count 0 :earliest 0 :latest 0}})
 
 
- ;;count column is counting size of column...if it is zero, it's missing
+ ;;(count column) is counting size of column...if it is zero, it's missing
  (defn profile-missing [column c-profile]
    (if (zero? (count column))
               (update-in c-profile [:missing] + 1) (update-in c-profile [:count] + 1)))
@@ -75,18 +60,20 @@
     (profile-numeric column)
     ))
 
-
- (defn profile-row [num_columns profile row]
-   (if (not= (count row) num_columns) profile
-      (loop [cp profile c row res []]
-       (if cp (recur (next cp) (next c) (conj res (profile-column (first cp) (first c)))) res))))
-
-
+;;ignoring incomplete rows...maybe extend profile to include
+;;information about incomplete rows?
+(defn profile-row [num_columns profile row]
+  (if (= (count row) num_columns)
+    (doall (map profile-column profile row)) profile))
 
 
-  ;;should probably get a distribution of row size and take the most common...note that hcat client just takes the max
+  ;;take max (like hcat client) or take mode?
  (defn get-num-columns [rows]
-   (count (first rows)))
+   (->>
+     rows
+    (map count)
+    (reduce max)))
+
 
   (defn profile-data [rows]
     (let [num_columns (get-num-columns rows)]
@@ -118,10 +105,10 @@
 
 
 
+(defn count-num-records [rdd]
+   (->> rdd
+         spark/count
+    ))
 
-;;will dorun fix stackoverflow problem?  maybe...but do run is only good
- ;;for side effects....returns nil
- ;(defn profile-row [num_columns profile row]
-  ; (if (= (count row) num_columns)
-     ;(dorun (map profile-column profile row)) profile))
+
 

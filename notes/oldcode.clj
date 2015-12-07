@@ -76,5 +76,27 @@
     ))
 
 
+;;bit of nonesense to handle key-value pairs
+ (defn get-num-col-dist [rdd]
+    (->>
+     rdd
+    (spark/map #(str/split % #","))
+    (spark/map-to-pair (fn [r] (spark/tuple (count r) 1)))
+    (spark/reduce-by-key +)
+    (spark/map (s-de/key-value-fn (fn [k v] [k v])))
+     spark/collect))
 
+
+
+;;will dorun fix stackoverflow problem?  maybe...but do run is only good
+ ;;for side effects....returns nil
+ ;(defn profile-row [num_columns profile row]
+  ; (if (= (count row) num_columns)
+     ;(dorun (map profile-column profile row)) profile))
+
+;;stack overflow error becaues of lazy evaluation if i use a map here
+; (defn profile-row [num_columns profile row]
+ ;  (if (not= (count row) num_columns) profile
+  ;    (loop [cp profile c row res []]
+   ;    (if cp (recur (next cp) (next c) (conj res (profile-column (first cp) (first c)))) res))))
 

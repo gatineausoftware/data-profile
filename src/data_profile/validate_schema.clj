@@ -1,18 +1,23 @@
-(ns data-profile.schemavalidation
+(ns data-profile.validate-schema
   (:require   [clojure.string :as string]
               [sparkling.conf :as conf]
               [sparkling.core :as spark]
               [sparkling.destructuring :as s-de]
               [clojure.string :as str]
               [clojure-csv.core :as csv]
-              [data-profile.schema :as schema])
+              [clojure.java.io :as io])
   (:use       [data-profile.util]
               [data-profile.profile]))
+
+(defn get-schema [name]
+  (read-string (slurp (io/resource name))))
 
 
 ;; verifies that a columm satisfies schema, returns true or false
 ;should use if-let here
- (defn columm-satisfies-schema? [a b]
+;;need to add decimal
+
+ (defn column-satisfies-schema? [a b]
    (case (:type a)
      :integer (if (isInteger? b)
                 (and (<= (bigint b) (:max a) ) (>= (bigint b) (:min a)))
@@ -21,12 +26,14 @@
                 true)
      :varchar (if (<= (count b) (:size a)) true false)
      :date (isDate? b)
+     :decimal (if-let [d (getDecimal b)]
+                (and (<= d (:max a)) (>= d (:min a)) (<= (.scale d) (:max_scale a))) false)
      true))
 
 
  (defn row-satisfies-schema? [schema row]
    (if (= (count schema) (count row))
-     (every? true? (map columm-satisfies-schema? schema row))
+     (every? true? (map column-satisfies-schema? schema row))
      false))
 
 
