@@ -31,16 +31,12 @@
     (bigdec s)
     (catch Exception e nil)))
 
-
-
 ;;this seems silly..is there not a better way?
  (defn pmin [a b]
    (cond
     (= a :none) b
     (= b :none) a
     :else (min a b)))
-
-
 
  (defn pmax [a b]
    (cond

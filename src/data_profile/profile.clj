@@ -8,14 +8,9 @@
   (:use       [data-profile.util]))
 
 
-
-
-
 (defn count-num-records [rdd]
    (->> rdd
-         spark/count
-    ))
-
+         spark/count))
 
 
  (def a {:count 0 :missing 0 :max_length 0
@@ -43,7 +38,6 @@
       (update-in [:numeric :max] pmax d)
       ) c-profile))
 
-
  (defn profile-integer [column c-profile]
   (if-let [int-col (getInteger column)]
    (->
@@ -52,12 +46,9 @@
     )
     c-profile))
 
-
  (defn profile-date [column c-profile]
    (if (isDate? column)
      (update-in c-profile [:date :count] + 1) c-profile))
-
-
 
  (defn profile-column [c-profile column]
    (->>
@@ -75,7 +66,6 @@
   (if (= (count row) num_columns)
     (doall (map profile-column profile row)) profile))
 
-
   ;;take max (like hcat client) or take mode?
  (defn get-num-columns [rows]
    (->>
@@ -83,11 +73,9 @@
     (map count)
     (reduce max)))
 
-
   (defn profile-data [rows]
     (let [num_columns (get-num-columns rows)]
     (reduce (partial profile-row num_columns) (repeat num_columns a) rows)))
-
 
 
   (defn profile [rdd {:keys [delimiter sample]}]
@@ -98,8 +86,5 @@
     (map #(first (csv/parse-csv % :delimiter delimiter)))
     (profile-data)
     ))
-
-
-
 
 
