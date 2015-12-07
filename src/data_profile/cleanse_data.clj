@@ -4,8 +4,7 @@
               [sparkling.destructuring :as s-de]
               [clojure.string :as str]
               [clojure-csv.core :as csv]
-              [data-profile.schema :as schema]
-              [data-profile.schemavalidation :as c])
+              [data-profile.validate-schema :as c])
   (:use       [data-profile.util]
               ))
 

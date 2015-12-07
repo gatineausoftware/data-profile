@@ -3,8 +3,7 @@
               [sparkling.core :as spark]
               [sparkling.destructuring :as s-de]
               [clojure.string :as str]
-              [clojure-csv.core :as csv]
-              [data-profile.schema :as schema])
+              [clojure-csv.core :as csv])
   (:use       [data-profile.util]))
 
 

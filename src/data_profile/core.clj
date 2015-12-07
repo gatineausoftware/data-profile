@@ -5,12 +5,11 @@
               [sparkling.destructuring :as s-de]
               [clojure.string :as str]
               [clojure-csv.core :as csv]
-              [data-profile.schema :as schema]
               [data-profile.profile :as profile]
               [data-profile.cleanse-data :as cleanse]
               [clojure.tools.cli :refer [parse-opts]])
   (:use       [data-profile.util]
-              [data-profile.schemavalidation]
+              [data-profile.validate-schema]
               )
   (:gen-class))
 
@@ -75,7 +74,7 @@
       (if
        (< (count arguments) 3)
             (exit 1 (usage summary))
-            (check-schema (spark/text-file sc (second arguments)) (schema/get-schema (nth arguments 2)))))
+            (check-schema (spark/text-file sc (second arguments)) (get-schema (nth arguments 2)))))
      (clojure.pprint/pprint))))
 
 
