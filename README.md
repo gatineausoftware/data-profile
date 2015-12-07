@@ -60,3 +60,4 @@ spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-S
 15. be sure to cache rdd for sequences of operations.
 17. re-name schemas, adopt a database/table convention.
 18. autogenerate schema after profiling.
+19. process directories recursively

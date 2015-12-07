@@ -95,7 +95,6 @@
 
 
   (defn profile-with-options [rdd {:keys [delimiter sample]}]
-    (clojure.pprint/pprint (str "the delimiter is: " delimiter))
    (->>
     rdd
     (spark/sample true sample 78)
@@ -119,10 +118,10 @@
 
 
 
+
 ;;will dorun fix stackoverflow problem?  maybe...but do run is only good
  ;;for side effects....returns nil
  ;(defn profile-row [num_columns profile row]
   ; (if (= (count row) num_columns)
      ;(dorun (map profile-column profile row)) profile))
-
 
