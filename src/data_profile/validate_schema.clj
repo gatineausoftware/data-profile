@@ -9,22 +9,20 @@
   (:use       [data-profile.util]
               [data-profile.profile]))
 
-(defn get-schema [name]
-  (read-string (slurp (io/resource name))))
 
 
-;; verifies that a columm satisfies schema, returns true or false
-;should use if-let here
-;;need to add decimal
+ (defn get-schema [name]
+   (read-string (slurp (io/resource name))))
+
 
  (defn column-satisfies-schema? [a b]
    (case (:type a)
-     :integer (if (isInteger? b)
-                (and (<= (bigint b) (:max a) ) (>= (bigint b) (:min a)))
+     :integer (if-let [i (getInteger b)]
+                (and (<= i (:max a) ) (>= i (:min a)))
                 false)
-     :numeric (if (isInteger? b)
-                true)
-     :varchar (if (<= (count b) (:size a)) true false)
+     :numeric (if-let [d (getDecimal)]
+                true false)
+     :varchar (<= (count b) (:size a))
      :date (isDate? b)
      :decimal (if-let [d (getDecimal b)]
                 (and (<= d (:max a)) (>= d (:min a)) (<= (.scale d) (:max_scale a))) false)
@@ -32,30 +30,17 @@
 
 
  (defn row-satisfies-schema? [schema row]
-   (if (= (count schema) (count row))
-     (every? true? (map column-satisfies-schema? schema row))
-     false))
+   (and (= (count schema) (count row))
+     (every? true? (map column-satisfies-schema? schema row))))
 
 
- (defn get-bad-rows [rdd schema]
-    (->>
-     rdd
-    (spark/map #(first (csv/parse-csv %)))
-    (spark/filter  (complement (partial row-satisfies-schema? schema)))))
 
-
-  ;; may need to use csv/write-csv
- (defn write-bad-data [rdd schema output]
-   (->>
-    (get-bad-rows rdd schema)
-    (spark/map #(apply str (interpose "," %)))
-    (spark/save-as-text-file output)))
 
 
   (defn check-integer [x min max]
-    (if (isInteger? x)
-          (if (or (< (getInteger x) min) (> (getInteger x) max))
-            {:error :int_range} {:error :none}) {:error :non_int}))
+    (if-let [i (getInteger x)]
+        (if (or (< i min) (> i max))
+           {:error :int_range} {:error :none}) {:error :non_int}))
 
 
   (defn check-varchar [x size]
@@ -66,7 +51,7 @@
     (if (isInteger? x)
       {:error :none} {:error :non_numeric}))
 
-  ;;add decimal
+  ;;add decimal and date
   (defn validate-field [a b]
     (let [f {:name (:name a) :value b}]
 
@@ -82,18 +67,22 @@
      (map validate-field schema row)
      (filter #(not= :none (:error %)))))
 
- (defn get-schema-errors [rdd schema]
+
+  ;;this just tests schema against few rows
+  (defn test-schema [rdd schema_name {:keys [delimiter num_records]}]
    (->>
-    (get-bad-rows rdd schema)
-    (spark/map (partial validate-row schema))
-    (spark/take 100)
-  ))
+    rdd
+    (spark/take num_records)
+    (map #(first (csv/parse-csv % :delimiter delimiter)))
+    (map (partial validate-row (get-schema schema-name)))))
 
 
- (defn check-schema [rdd schema]
-   (->>
+
+  ;;prints out records that don't match schema
+  (defn find-schema-errors [rdd schema_name {:keys [delimiter num_records]}]
+    (->>
      rdd
-    (spark/map #(first (csv/parse-csv %)))
-    (spark/take 1)
-    first
-    (map validate-field schema)))
+     (spark/map #(first (csv/parse-csv % :delimiter delimiter)))
+     (spark/filter (complement (partial row-satisfies-schema? (get-schema schema-name))))
+     (spark/take num_records)))
+

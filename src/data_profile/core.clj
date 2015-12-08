@@ -22,13 +22,17 @@
 
 (def cli-options
   ;; An option with a required argument
-  [["-d" "--delimiter D" "CSV delimiter"
+  [["-d" "--delimiter d" "CSV delimiter"
     :default \,
     :parse-fn #(first (seq  %))]
 
-    ["-s" "--sample S" "Sample Size"
+    ["-s" "--sample s" "Sample Size"
     :default 1
     :parse-fn bigdec]
+
+    ["-n" "--num_records n" "number of records"
+    :default 1
+    :parse-fn bigint]
 
     ["-h" "--help"]])
 
@@ -70,11 +74,11 @@
     (case (first arguments)
       "count" (profile/count-num-records (spark/text-file sc (second arguments)))
       "profile" (profile/profile (spark/text-file sc (second arguments)) options)
-      "check-schema"
+      "test-schema"
       (if
        (< (count arguments) 3)
             (exit 1 (usage summary))
-            (check-schema (spark/text-file sc (second arguments)) (get-schema (nth arguments 2)))))
+            (test-schema (spark/text-file sc (second arguments)) (nth arguments 2) options)))
      (clojure.pprint/pprint))))
 
 

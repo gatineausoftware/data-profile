@@ -8,7 +8,7 @@
   (:use       [data-profile.util]
               ))
 
- ;;the write/csv is seems to be adding an additional cr
+ ;;the write/csv is seems to be adding an additional cr...need to incoporate delimiter
  (defn write-good-rows [schema output rdd]
     (->>
      rdd
@@ -25,11 +25,12 @@
 
 
 
-(defn cleanse [rdd schema output]
+(defn cleanse [rdd schema_name output {:keys [delimiter]}]
   (let [parsed-data
-   (->>
-    rdd
-    (spark/map #(first (csv/parse-csv %))))]
+    (spark/map #(first (csv/parse-csv % :delimiter delimiter)) rdd)
+        schema (c/get-schema schema_name)]
+
     (spark/cache parsed-data)
     (write-good-rows schema output parsed-data)
     (write-bad-rows schema output parsed-data)))
+
