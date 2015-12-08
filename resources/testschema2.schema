@@ -1,0 +1,9 @@
+
+  [
+  {:name "a" :type :string}
+  {:name "b" :type :varchar :size 10}
+  {:name "c" :type :date}
+  {:name "d" :type :integer :min 0 :max 1000}
+  {:name "e" :type :numeric}
+  {:name "f" :type :decimal :min 0 :max 1000 :max_scale 2}
+  ]

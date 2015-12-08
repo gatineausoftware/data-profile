@@ -100,7 +100,13 @@
   ;    (loop [cp profile c row res []]
    ;    (if cp (recur (next cp) (next c) (conj res (profile-column (first cp) (first c)))) res))))
 
-
+ (defn check-schema [rdd schema]
+   (->>
+     rdd
+    (spark/map #(first (csv/parse-csv %)))
+    (spark/take 1)
+    first
+    (map validate-field schema)))
 
 
 

@@ -1,6 +1,8 @@
 (ns data-profile.validate-schema-test
   (:use [clojure.test])
-  (:require [data-profile.validate-schema :as schema]))
+  (:require [data-profile.validate-schema :as schema]
+            [sparkling.core :as spark]
+            [sparkling.conf :as conf]))
 
 
 
@@ -37,4 +39,21 @@
     (is (= {:name "a" :value "100" :error :int_range} (schema/validate-field {:name "a" :type :integer
                                                                      :min 0 :max 10} "100")))))
 
+
+
+
+(deftest schematest3
+  (spark/with-context
+    sc
+    (-> (conf/spark-conf)
+        (conf/set-sparkling-registrator)
+        (conf/set "spark.kryo.registrationRequired" "true")
+        (conf/master "local[*]")
+        (conf/app-name "api-test"))
+    (testing
+      (is (= 2
+           (->
+           (spark/text-file sc "resources/sample2.csv")
+           (schema/list-bad-records "testschema2.schema" {:delimiter \, :num-records 10})
+           (count)))))))
 

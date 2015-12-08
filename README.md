@@ -25,9 +25,9 @@ spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-S
 
 ### Examples
 ##### local
-1. lein run check-schema netbase/ redshift.schema
-2. lein run write-bad-data netbase/ redshift.schema output
-3. lein run get-schema-errors netbase/ redshift.schema
+1. lein run list-bad-records resources/sample2.csv testschema2.schema
+2. lein run profile resources/sample.csv
+
 
 ##### on cluster
 1. spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-SNAPSHOT-standalone.jar write-bad-data s3n://path/yourfile.csv  ahold.schema output

@@ -20,7 +20,7 @@
      :integer (if-let [i (getInteger b)]
                 (and (<= i (:max a) ) (>= i (:min a)))
                 false)
-     :numeric (if-let [d (getDecimal)]
+     :numeric (if-let [d (getDecimal b)]
                 true false)
      :varchar (<= (count b) (:size a))
      :date (isDate? b)
@@ -32,8 +32,6 @@
  (defn row-satisfies-schema? [schema row]
    (and (= (count schema) (count row))
      (every? true? (map column-satisfies-schema? schema row))))
-
-
 
 
 
@@ -62,27 +60,31 @@
      (conj f {:error :none}))))
 
 
-  (defn validate-row [schema row]
-    (->>
+  (defn get-schema-errors [schema row]
+    (doall
+     (->>
      (map validate-field schema row)
-     (filter #(not= :none (:error %)))))
+     (filter #(not= :none (:error %))))))
 
 
-  ;;this just tests schema against few rows
-  (defn test-schema [rdd schema_name {:keys [delimiter num_records]}]
+  ;;prints out validation errors of num_records that have schema errors
+  (defn list-schema-errors [rdd schema-name {:keys [delimiter num-records]}]
+
    (->>
     rdd
-    (spark/take num_records)
-    (map #(first (csv/parse-csv % :delimiter delimiter)))
-    (map (partial validate-row (get-schema schema-name)))))
+    (spark/map #(first (csv/parse-csv % :delimiter delimiter)))
+    (spark/filter (complement (partial row-satisfies-schema? (get-schema schema-name))))
+    (spark/take num-records)
+    (map (partial get-schema-errors (get-schema schema-name)))))
 
 
 
   ;;prints out records that don't match schema
-  (defn find-schema-errors [rdd schema_name {:keys [delimiter num_records]}]
+  (defn list-bad-records [rdd schema-name {:keys [delimiter num-records]}]
+    (println schema-name)
     (->>
      rdd
      (spark/map #(first (csv/parse-csv % :delimiter delimiter)))
      (spark/filter (complement (partial row-satisfies-schema? (get-schema schema-name))))
-     (spark/take num_records)))
+     (spark/take num-records)))
 

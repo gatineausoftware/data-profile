@@ -30,8 +30,8 @@
     :default 1
     :parse-fn bigdec]
 
-    ["-n" "--num_records n" "number of records"
-    :default 1
+    ["-n" "--num-records n" "number of records"
+    :default 10
     :parse-fn bigint]
 
     ["-h" "--help"]])
@@ -47,7 +47,8 @@
         "Actions:"
         "  count <filename> Count the number of lines in a data set"
         "  profile <filename> Profile contents of a dataset"
-        "  check-schema <filename> <schema> checks a single row against a schema"
+        "  check-schema <filename> <schema> checks schema"
+        "  cleanse <filename> <schema> <output> Writes file in to 'good' and 'bad' subdirectories"
         ""]
        (string/join \newline)))
 
@@ -74,11 +75,22 @@
     (case (first arguments)
       "count" (profile/count-num-records (spark/text-file sc (second arguments)))
       "profile" (profile/profile (spark/text-file sc (second arguments)) options)
-      "test-schema"
+      "list-schema-errors"
       (if
        (< (count arguments) 3)
             (exit 1 (usage summary))
-            (test-schema (spark/text-file sc (second arguments)) (nth arguments 2) options)))
+            (list-schema-errors (spark/text-file sc (second arguments)) (nth arguments 2) options))
+      "list-bad-records"
+      (if
+       (< (count arguments) 3)
+            (exit 1 (usage summary))
+            (list-bad-records(spark/text-file sc (second arguments)) (nth arguments 2) options))
+      "cleanse"
+       (if
+       (< (count arguments) 4)
+            (exit 1  (usage summary))
+            (cleanse/cleanse (spark/text-file sc (second arguments)) (nth arguments 2) (nth arguments 3) options))
+      )
      (clojure.pprint/pprint))))
 
 
