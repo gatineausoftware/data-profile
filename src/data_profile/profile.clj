@@ -65,12 +65,6 @@
   (if (= (count row) num_columns)
     (doall (map profile-column profile row)) profile))
 
-;(defn profile-row [num_columns profile row]
- ;  (if (not= (count row) num_columns) profile
-  ;    (loop [cp profile c row res []]
-   ;    (if cp (recur (next cp) (next c) (conj res (profile-column (first cp) (first c)))) res))))
-
-
   ;;take max (like hcat client) or take mode?
  (defn get-num-columns [rows]
    (->>
