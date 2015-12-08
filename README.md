@@ -31,7 +31,7 @@ spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-S
 
 ##### on cluster
 1. spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-SNAPSHOT-standalone.jar write-bad-data s3n://path/yourfile.csv  ahold.schema output
-2. spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-SNAPSHOT-standalone.jar profile yourfile.csv
+2. spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-SNAPSHOT-standalone.jar profile s3n://ccnadl/raw/crest/ccna_rstr_basc/t_fact_food_summary/yr=2015/mo=10/dy=01/xaf -s 0.01 -d \|
 
 
 ### profile notes:
@@ -42,7 +42,7 @@ spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-S
 
 
 ### to do
-
+2. rather unhappy error message regarding kryo serialization if sample size is too big for profiling
 3. do functions need to be compiled to execute on cluster?
 6. get repl development working ** Yes.  however cannot submit functions defined in REPL**
 8. compare performance of clojure vs scala.
