@@ -32,9 +32,14 @@ spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-S
 
 
 ##### on cluster
-1. spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-SNAPSHOT-standalone.jar write-bad-data s3n://path/yourfile.csv  ahold.schema output
-2. spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-SNAPSHOT-standalone.jar profile s3n://ccnadl/raw/crest/ccna_rstr_basc/t_fact_food_summary/yr=2015/mo=10/dy=01/xaf -s 0.01 -d \|
 
+1. spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-SNAPSHOT-standalone.jar profile s3n://ccnadl/raw/crest/ccna_rstr_basc/t_fact_food_summary/yr=2015/mo=10/dy=01/xaf -s 0.01 -d \|
+
+2 .spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-SNAPSHOT-2tandalone.jar list-schema-errors s3n://ccnadl/raw/ahold/yr=2015/mo=11/dy=13/Coca_Cola_201345.csv ahold.schema -n 10
+
+3. spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-SNAPSHOT-standalone.jar cleanse s3n://ccnadl/raw/ahold/yr=2015/mo=11/dy=13/Coca_Cola_201345.csv ahold.schema output
+
+4. spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-SNAPSHOT-standalone.jar count  s3n://ccnadl/raw/ahold/yr=2015/mo=11/dy=13/Coca_Cola_201345.csv
 
 ### profile notes:
 - calculate % for different types?
