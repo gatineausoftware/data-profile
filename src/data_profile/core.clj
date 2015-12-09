@@ -7,6 +7,7 @@
               [clojure-csv.core :as csv]
               [data-profile.profile :as profile]
               [data-profile.cleanse-data :as cleanse]
+              [data-profile.validate-hcat-schema :as hcat]
               [clojure.tools.cli :refer [parse-opts]])
   (:use       [data-profile.util]
               [data-profile.validate-schema]
@@ -93,6 +94,7 @@
        (< (count arguments) 4)
             (exit 1  (usage summary))
             (cleanse/cleanse (spark/text-file sc (second arguments)) (nth arguments 2) (nth arguments 3) options))
+      "list-bad-records-hcat" (hcat/list-bad-records-hcat (spark/text-file sc (second arguments)) "hcatserver" "database" "table")
       )
      (clojure.pprint/pprint))))
 

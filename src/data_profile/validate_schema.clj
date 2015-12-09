@@ -104,7 +104,6 @@
 
   ;;prints out records that don't match schema
   (defn list-bad-records [rdd schema-name {:keys [delimiter num-records]}]
-    (println schema-name)
     (->>
      rdd
      (spark/map #(first (csv/parse-csv % :delimiter delimiter)))

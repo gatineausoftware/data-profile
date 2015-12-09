@@ -8,6 +8,8 @@
                 [clojure-csv/clojure-csv "2.0.1"]
                 [clj-time "0.8.0"]
                 [org.clojure/tools.cli "0.3.3"]
+                [clj-http "2.0.0"]
+                [org.clojure/data.json "0.2.6"]
                 ]
 
  :aot [#".*" sparkling.serialization sparkling.destructuring]
