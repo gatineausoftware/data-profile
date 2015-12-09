@@ -24,7 +24,7 @@
 (defn get-hcat-schema [hcatserver database table]
   ;;for now
   (->>
-   ((json/read-str(client/get "http://54.173.182.186:50111/templeton/v1/ddl/database/ahold/table/ahold_raw?user.name=ec2-user") :body) "columns")
+   (((json/read-str (client/get "http://54.173.182.186:50111/templeton/v1/ddl/database/ahold/table/ahold_raw?user.name=ec2-user")) :body) "columns")
    (map convert-ddl)
    (filter #(nil? (#{:mo :yr :dy} (% :name))))
    vec))

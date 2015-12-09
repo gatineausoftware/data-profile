@@ -94,7 +94,7 @@
        (< (count arguments) 4)
             (exit 1  (usage summary))
             (cleanse/cleanse (spark/text-file sc (second arguments)) (nth arguments 2) (nth arguments 3) options))
-      "list-bad-records-hcat" (hcat/list-bad-records-hcat (spark/text-file sc (second arguments)) "hcatserver" "database" "table")
+      "list-bad-records-hcat" (hcat/list-bad-records-hcat (spark/text-file sc (second arguments)) "hcatserver" "database" "table" options)
       )
      (clojure.pprint/pprint))))
 
