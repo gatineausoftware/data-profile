@@ -15,7 +15,7 @@
    (read-string (slurp (io/resource name))))
 
 
- (defn column-satisfies-schema? [a b]
+ (defn valid-column? [a b]
    (case (:type a)
      :integer (if-let [i (getInteger b)]
                 (and (<= i (:max a) ) (>= i (:min a)))
@@ -29,42 +29,65 @@
      true))
 
 
- (defn row-satisfies-schema? [schema row]
+ (defn valid-row? [schema row]
    (and (= (count schema) (count row))
-     (every? true? (map column-satisfies-schema? schema row))))
+     (every? true? (map valid-column? schema row))))
 
 
 
   (defn check-integer [x min max]
     (if-let [i (getInteger x)]
-        (if (or (< i min) (> i max))
-           {:error :int_range} {:error :none}) {:error :non_int}))
+      (->
+       []
+       (#(if (< i min) (conj % :min_range_error) %))
+       (#(if (> i max) (conj % :max_range_error) %))
+       )
+      [:int_format]))
+
+
+  (defn check-decimal [x min max scale]
+    (if-let [d (getDecimal x)]
+      (->
+       []
+       (#(if (< d min) (conj % :min_range_error) %))
+       (#(if (> d max) (conj % :max_range_error) %))
+       (#(if (> (.scale d) scale) (conj % :scale_error) %))
+       )
+      [:decimal_format]))
+
+
+  (defn check-date [x]
+    (if (isDate? x) [] [:date_format]))
+
+  (defn check-numeric [x]
+    (if (isInteger? x) [] [:number_format]))
 
 
   (defn check-varchar [x size]
       (if (> (count x) size)
-        {:error :varchar_range} {:error :none}))
+        [:varchar_range] []))
 
-  (defn check-numeric [x]
-    (if (isInteger? x)
-      {:error :none} {:error :non_numeric}))
 
-  ;;add decimal and date
+
   (defn validate-field [a b]
-    (let [f {:name (:name a) :value b}]
-
+    (let [f {:column (:name a) :value b}]
+     (conj f {:error
      (case (:type a)
-     :integer (conj f (check-integer b (:min a) (:max a)))
-     :numeric (conj f (check-numeric b))
-     :varchar (conj f (check-varchar b (:size a)))
-     (conj f {:error :none}))))
+       :integer (check-integer b (:min a) (:max a))
+       :numeric (check-numeric b)
+       :varchar (check-varchar b (:size a))
+       :decimal (check-decimal b (:min a) (:max a) (:max_scale a))
+       :date (check-date b)
+       [])})))
+
+
 
 
   (defn get-schema-errors [schema row]
     (doall
      (->>
      (map validate-field schema row)
-     (filter #(not= :none (:error %))))))
+     (filter #((complement empty?) (:error %))))))
 
 
   ;;prints out validation errors of num_records that have schema errors
@@ -73,7 +96,7 @@
    (->>
     rdd
     (spark/map #(first (csv/parse-csv % :delimiter delimiter)))
-    (spark/filter (complement (partial row-satisfies-schema? (get-schema schema-name))))
+    (spark/filter (complement (partial valid-row? (get-schema schema-name))))
     (spark/take num-records)
     (map (partial get-schema-errors (get-schema schema-name)))))
 
@@ -85,6 +108,6 @@
     (->>
      rdd
      (spark/map #(first (csv/parse-csv % :delimiter delimiter)))
-     (spark/filter (complement (partial row-satisfies-schema? (get-schema schema-name))))
+     (spark/filter (complement (partial valid-row? (get-schema schema-name))))
      (spark/take num-records)))
 

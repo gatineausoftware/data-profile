@@ -62,6 +62,9 @@
   (System/exit status))
 
 
+
+;;this is a mess...need to check for proper number arguments differently...put into a dispatch map or vector?
+
 (defn -main [& args]
   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)
         sc (make-spark-context)

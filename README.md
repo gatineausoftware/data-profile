@@ -27,6 +27,8 @@ spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-S
 ##### local
 1. lein run list-bad-records resources/sample2.csv testschema2.schema
 2. lein run profile resources/sample.csv
+3. lein run cleanse resources/sample2.csv testschema2.schema output
+4. lein run list-schema-errors resources/sample2.csv testschema2.schema
 
 
 ##### on cluster
@@ -50,7 +52,6 @@ spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-S
 10. use 'components' to manage spark context?
 11. add more metadata to schema, e.g., how is file delimited (comma, tab, | etc…)
 12. read data from other file formats (ORC, Parquet?  Spark supports this, but is it realistic for raw data to come in in these formats?)
-15. be sure to cache rdd for sequences of operations.
 17. re-name schemas, adopt a database/table convention.
 18. autogenerate schema after profiling.
 19. process directories recursively

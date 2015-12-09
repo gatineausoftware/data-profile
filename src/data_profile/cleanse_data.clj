@@ -10,16 +10,17 @@
 
  ;;the write/csv is seems to be adding an additional cr...need to incoporate delimiter
  (defn write-good-rows [schema output rdd]
+   (println output)
     (->>
      rdd
-    (spark/filter  (partial c/row-satisfies-schema? schema))
+    (spark/filter  (partial c/valid-row? schema))
     (spark/map (fn [x] (csv/write-csv (vector x))))
     (spark/save-as-text-file (str output "/good"))))
 
  (defn write-bad-rows [schema output rdd]
     (->>
      rdd
-    (spark/filter  (complement (partial c/row-satisfies-schema? schema)))
+    (spark/filter  (complement (partial c/valid-row? schema)))
     (spark/map (fn [x] (csv/write-csv (vector x))))
     (spark/save-as-text-file(str output "/bad"))))
 

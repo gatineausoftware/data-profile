@@ -21,23 +21,27 @@
 
 (deftest schematest1
   (testing
-    (is (true? (schema/column-satisfies-schema? {:type :string} "atlanta"))))
+    (is (true? (schema/valid-column? {:type :string} "atlanta"))))
   (testing
-    (is (true? (schema/column-satisfies-schema? {:type :integer :min 0 :max 1000} 10))))
+    (is (true? (schema/valid-column? {:type :integer :min 0 :max 1000} 10))))
   (testing
-    (is (true? (schema/column-satisfies-schema? {:type :decimal :min 0 :max 1000 :max_scale 2} 2.2))))
+    (is (true? (schema/valid-column? {:type :decimal :min 0 :max 1000 :max_scale 2} 2.2))))
   (testing
-    (is (false? (schema/column-satisfies-schema? {:type :integer :min 0 :max 10} 20))))
+    (is (false? (schema/valid-column? {:type :integer :min 0 :max 10} 20))))
   (testing
     (is (true?
-         (schema/row-satisfies-schema? testschema1 testrow1)))))
+         (schema/valid-row? testschema1 testrow1)))))
 
 
 
 (deftest schematest2
   (testing
-    (is (= {:name "a" :value "100" :error :int_range} (schema/validate-field {:name "a" :type :integer
-                                                                     :min 0 :max 10} "100")))))
+    (is (= {:column "a" :value "100" :error [:max_range_error]} (schema/validate-field {:name "a" :type :integer
+                                                                                      :min 0 :max 10} "100"))))
+  (testing
+    (is (= {:column "c" :value "2015-01-01" :error []} (schema/validate-field {:name "c" :type :date}
+                                                                            "2015-01-01"))))
+)
 
 
 
@@ -58,7 +62,7 @@
            (count)))))
 
     (testing
-      (is (= 3
+      (is (= 2
            (->
            (spark/text-file sc "resources/sample2.csv")
            (schema/list-schema-errors "testschema2.schema" {:delimiter \, :num-records 10})
