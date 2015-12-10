@@ -31,7 +31,7 @@
   (let [p1 (client/get (str base "/database/" database "/table" "?user.name=ec2-user"))
         p2((json/read-str (p1 :body)) "tables")]
 
-    (map (partial get-partitions database) p2)))
+    (mapcat (partial get-partitions database) p2)))
 
 
  (defn count-records [sc directory]
@@ -43,7 +43,7 @@
 
  (defn validate-partitions [sc database]
    (let [partitions (get-all-partitions-for-database database)]
-     (map (partial count-records sc) (first partitions))))
+     (map (partial count-records sc) partitions)))
 
 
 
