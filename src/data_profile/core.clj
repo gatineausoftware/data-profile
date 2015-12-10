@@ -97,7 +97,7 @@
             (cleanse/cleanse (spark/text-file sc (second arguments)) (nth arguments 2) (nth arguments 3) options))
       "list-bad-records-hcat" (hcat/list-bad-records-hcat (spark/text-file sc (second arguments)) "hcatserver" "database" "table" options)
       "validate-partitions" (part/validate-partitions sc (second arguments))
-      "validate-partitions2" (part/validate-partitions2 sc (second arguments))
+
       )
      (clojure.pprint/pprint))))
 

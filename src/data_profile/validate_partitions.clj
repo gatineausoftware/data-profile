@@ -14,6 +14,13 @@
 
 (def base "http://54.173.182.186:50111/templeton/v1/ddl")
 
+(defn get-all-partitions-for-database [database]
+  (let [p1 (client/get (str base "/database/" database "/table" "?user.name=ec2-user"))
+        p2 ((json/read-str (p1 :body)) "tables")]
+        (mapcat (partial get-partitions database) p2)))
+
+
+
 (defn get-partition [database table partition]
   (let [ p1 (client/get (str base "/database/" database "/table/" table "/partition/" (partition "name") "?user.name=ec2-user"))
          p2 ((json/read-str (p1 :body)) "location")]
@@ -27,37 +34,16 @@
     (map (partial get-partition database table) p2)))
 
 
- (defn get-all-partitions-for-database [database]
-  (let [p1 (client/get (str base "/database/" database "/table" "?user.name=ec2-user"))
-        p2 ((json/read-str (p1 :body)) "tables")]
 
-    (mapcat (partial get-partitions database) p2)))
-
-
- (defn count-records [sc directory]
-   (let [rdd (spark/text-file sc (str directory "/"))
-         c (spark/count rdd)]
-     (println (str  directory ": " c))
-     c))
-
-
-
- (defn validate-partitions [sc database]
-   (let [partitions (get-all-partitions-for-database database)]
-     (map (partial count-records sc) partitions)))
-
-
-  ;*********
-
-   (defn count-records2 [sc database table directory]
+  (defn count-records [sc database table directory]
       (let [rdd (spark/text-file sc (str directory "/"))
          c (spark/count rdd)]
-     (println (str  database "." table "=>" directory ": " c))
+      (println (str  database "." table "=>" directory ": " c))
       [database table directory c]))
 
   (defn count-records-for-table-partitions [sc database table]
     (let [partitions (get-partitions database table)]
-      (map (partial count-records2 sc database table) partitions)))
+      (map (partial count-records sc database table) partitions)))
 
 
 
@@ -66,7 +52,7 @@
 
 
 
-  (defn validate-partitions2 [sc database]
+  (defn validate-partitions [sc database]
     (let [tables (get-tables-for-database database)]
       (map (partial count-records-for-table-partitions sc database) tables)))
 
