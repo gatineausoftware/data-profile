@@ -43,7 +43,7 @@
 
  (defn validate-partitions [sc database]
    (let [partitions (get-all-partitions-for-database database)]
-     (map (partial count-records sc) partitions)))
+     (map (partial count-records sc) (first partitions))))
 
 
 
