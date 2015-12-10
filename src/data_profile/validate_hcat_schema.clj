@@ -21,6 +21,7 @@
 
 
 ;;need to support :decimal(10,2)
+;filter to eliminate our ingestion partition if present
 (defn get-hcat-schema [hcatserver database table]
   ;;for now
   (let [t (client/get "http://54.173.182.186:50111/templeton/v1/ddl/database/ahold/table/ahold_raw?user.name=ec2-user")]
@@ -51,7 +52,7 @@
      (every? true? (map valid-column? schema row))))
 
 
-
+;;change this to get partitions from hcat, instead of passing in file?
 (defn list-bad-records-hcat [rdd hcatserver database table {:keys [delimiter num-records]}]
     (->>
      rdd

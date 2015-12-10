@@ -29,21 +29,47 @@
 
  (defn get-all-partitions-for-database [database]
   (let [p1 (client/get (str base "/database/" database "/table" "?user.name=ec2-user"))
-        p2((json/read-str (p1 :body)) "tables")]
+        p2 ((json/read-str (p1 :body)) "tables")]
 
     (mapcat (partial get-partitions database) p2)))
 
 
  (defn count-records [sc directory]
-   (let [rdd (spark/text-file sc (str directory "/"))]
-     (clojure.pprint/pprint directory)
-     (clojure.pprint/pprint (spark/count rdd))))
+   (let [rdd (spark/text-file sc (str directory "/"))
+         c (spark/count rdd)]
+     (println (str  directory ": " c))
+     c))
 
 
 
  (defn validate-partitions [sc database]
    (let [partitions (get-all-partitions-for-database database)]
      (map (partial count-records sc) partitions)))
+
+
+  ;*********
+
+   (defn count-records2 [sc database table directory]
+      (let [rdd (spark/text-file sc (str directory "/"))
+         c (spark/count rdd)]
+     (println (str  database "." table "=>" directory ": " c))
+      [database table directory c]))
+
+  (defn count-records-for-table-partitions [sc database table]
+    (let [partitions (get-partitions database table)]
+      (map (partial count-records2 sc database table) partitions)))
+
+
+
+  (defn get-tables-for-database [database]
+     ((json/read-str ((client/get (str base "/database/" database "/table" "?user.name=ec2-user")) :body)) "tables"))
+
+
+
+  (defn validate-partitions2 [sc database]
+    (let [tables (get-tables-for-database database)]
+      (map (partial count-records-for-table-partitions sc database) tables)))
+
 
 
 
