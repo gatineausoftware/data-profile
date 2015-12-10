@@ -20,7 +20,7 @@
    (assoc-in [:type] (keyword (c "type")))))
 
 
-
+;;need to support :decimal(10,2)
 (defn get-hcat-schema [hcatserver database table]
   ;;for now
   (let [t (client/get "http://54.173.182.186:50111/templeton/v1/ddl/database/ahold/table/ahold_raw?user.name=ec2-user")]
