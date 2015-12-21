@@ -55,9 +55,10 @@
 
 
 
-;;this duplicates from validate_schema...need to consolidate somehow.  ideally insert bounds on ints etc...
-
+;;if column is missing it's ok....probably this should be specified.
 (defn valid-column? [a b]
+  (if (empty? b)
+    true
    (case (:type a)
      :integer (if-let [i (getInteger b)]
                 true
@@ -69,7 +70,7 @@
      :decimal (if-let [d (getDecimal b)]
                 (and (<= d (:max a)) (<= (.scale d) (:max_scale a))) false)
 
-     true))
+     true)))
 
 
  (defn valid-row? [schema row]
