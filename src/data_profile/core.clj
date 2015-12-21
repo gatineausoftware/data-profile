@@ -36,6 +36,10 @@
     :default 10
     :parse-fn bigint]
 
+    ["-p" "--port p" "hcat server port"
+     :default 50111
+     :parse-fn bigint]
+
     ["-h" "--help"]])
 
 (defn usage [options-summary]
@@ -51,6 +55,7 @@
         "  profile <filename> Profile contents of a dataset"
         "  check-schema <filename> <schema> checks schema"
         "  cleanse <filename> <schema> <output> Writes file in to 'good' and 'bad' subdirectories"
+        "  list-bad-records-hcat <filename> <hcatserver> <database> <table> "
         ""]
        (string/join \newline)))
 
@@ -95,7 +100,11 @@
        (< (count arguments) 4)
             (exit 1  (usage summary))
             (cleanse/cleanse (spark/text-file sc (second arguments)) (nth arguments 2) (nth arguments 3) options))
-      "list-bad-records-hcat" (hcat/list-bad-records-hcat (spark/text-file sc (second arguments)) "hcatserver" "database" "table" options)
+      "list-bad-records-hcat"
+       (if
+         (< (count arguments) 5)
+         (exit 1 (usage summary))
+         (hcat/list-bad-records-hcat (spark/text-file sc (second arguments)) (nth arguments 2) (nth arguments 3) (nth arguments 4) options))
       "validate-partitions" (part/validate-partitions sc (second arguments))
 
       )
