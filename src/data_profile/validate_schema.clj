@@ -37,7 +37,6 @@
      (every? true? (map valid-column? schema row))))
 
 
-  ;check (empty? x)
   (defn check-integer [x min max]
     (if-let [i (getInteger x)]
       (->
@@ -73,17 +72,16 @@
 
 
   (defn validate-field [a b]
-    (if (empty? b)
-    {:error []}
     (let [f {:column (:name a) :value b}]
      (conj f {:error
-     (case (:type a)
-       :integer (check-integer b (:min a) (:max a))
-       :numeric (check-numeric b)
-       :varchar (check-varchar b (:size a))
-       :decimal (check-decimal b (:min a) (:max a) (:max_scale a))
-       :date (check-date b)
-       [])}))))
+        (if (empty? b) []
+         (case (:type a)
+           :integer (check-integer b (:min a) (:max a))
+           :numeric (check-numeric b)
+           :varchar (check-varchar b (:size a))
+           :decimal (check-decimal b (:min a) (:max a) (:max_scale a))
+           :date (check-date b)
+           []))})))
 
 
 
