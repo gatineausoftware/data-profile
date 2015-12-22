@@ -1,5 +1,5 @@
 
-(ns data-profile.validate-hcat-schema-test
+(ns data-profile.convert-hive-schema-test
   (:use [clojure.test])
   (:require [data-profile.validate-hcat-schema :as schema]
             [sparkling.core :as spark]
@@ -26,13 +26,8 @@
   (testing
     (is (= true (schema/hiveDecimal? (keyword "decimal(10,2)")))))
   (testing
-    (is (= {:type :decimal :max 1000000 :max_scale 3} (schema/getHiveDecimal {:type (keyword "decimal(9,3)")}))))
-  (testing
-    (is (true? (schema/valid-column? {:type :decimal :max 10000000 :max_scale 2} "-1.00"))))
-   (testing
-    (is (true? (schema/valid-column? {:type :decimal :max 10000000 :max_scale 2} ""))))
-   (testing
-    (is (true? (schema/valid-column? {:type :decimal :max 10000000 :max_scale 2} "105850598"))))
+    (is (= {:type :decimal :max 1000000 :min -1000000 :max_scale 3} (schema/getHiveDecimal {:type (keyword "decimal(9,3)")}))))
+
 )
 
 

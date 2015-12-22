@@ -5,7 +5,8 @@
               [sparkling.destructuring :as s-de]
               [clojure.string :as str]
               [clojure-csv.core :as csv]
-              [clojure.java.io :as io])
+              [clojure.java.io :as io]
+              [data-profile.convert-hive-schema :as hive])
   (:use       [data-profile.util]
               [data-profile.profile]))
 
@@ -16,6 +17,8 @@
 
 
  (defn valid-column? [a b]
+    (if (empty? b)
+    true
    (case (:type a)
      :integer (if-let [i (getInteger b)]
                 (and (<= i (:max a) ) (>= i (:min a)))
@@ -26,7 +29,7 @@
      :date (isDate? b)
      :decimal (if-let [d (getDecimal b)]
                 (and (<= d (:max a)) (>= d (:min a)) (<= (.scale d) (:max_scale a))) false)
-     true))
+     true)))
 
 
  (defn valid-row? [schema row]
@@ -34,7 +37,7 @@
      (every? true? (map valid-column? schema row))))
 
 
-
+  ;check (empty? x)
   (defn check-integer [x min max]
     (if-let [i (getInteger x)]
       (->
@@ -92,14 +95,25 @@
 
   ;;prints out validation errors of num_records that have schema errors
   (defn list-schema-errors [rdd schema-name {:keys [delimiter num-records]}]
-
+   (let [schema (get-schema schema-name)]
    (->>
     rdd
     (spark/map #(first (csv/parse-csv % :delimiter delimiter)))
-    (spark/filter (complement (partial valid-row? (get-schema schema-name))))
+    (spark/filter (complement (partial valid-row? schema)))
     (spark/take num-records)
-    (map (partial get-schema-errors (get-schema schema-name)))))
+    (map (partial get-schema-errors schema)))))
 
+
+
+  (defn list-schema-errors-hcat [rdd database table {:keys [delimiter num-records]}]
+    (let [c (read-string (slurp (io/resource "hcat_config.edn")))
+          schema (hive/get-schema (c :server) (c :port) database table)]
+      (->>
+        rdd
+        (spark/map #(first (csv/parse-csv % :delimiter delimiter)))
+        (spark/filter (complement (partial valid-row? schema)))
+        (spark/take num-records)
+        (map (partial get-schema-errors schema)))))
 
 
   ;;prints out records that don't match schema
@@ -109,4 +123,19 @@
      (spark/map #(first (csv/parse-csv % :delimiter delimiter)))
      (spark/filter (complement (partial valid-row? (get-schema schema-name))))
      (spark/take num-records)))
+
+
+
+  (defn list-bad-records-hcat [rdd database table {:keys [delimiter num-records]}]
+    (let [c (read-string (slurp (io/resource "hcat_config.edn")))]
+    (->>
+     rdd
+     (spark/map #(first (csv/parse-csv % :delimiter delimiter)))
+     (spark/filter (complement (partial valid-row? (hive/get-schema (c :server) (c :port) database table))))
+     (spark/take num-records))))
+
+
+
+
+
 

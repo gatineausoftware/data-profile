@@ -28,6 +28,7 @@
     (is (true? (schema/valid-column? {:type :decimal :min 0 :max 1000 :max_scale 2} 2.2))))
   (testing
     (is (false? (schema/valid-column? {:type :integer :min 0 :max 10} 20))))
+
   (testing
     (is (true?
          (schema/valid-row? testschema1 testrow1)))))
