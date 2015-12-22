@@ -16,6 +16,8 @@
 (deftest parsecsvtest
   (testing
     (is (= [["a" "b" "c"]] (csv/parse-csv "a,b,c"))))
+  (testing
+    (is (= [["a" "b" "" "c"]] (csv/parse-csv "a,b,,c"))))
 
   (testing
     (is (= "a,b,c\n" (csv/write-csv [["a" "b" "c"]]))))
@@ -24,6 +26,9 @@
   ;  (is (= 10 (count (map (fn [x] (csv/write-csv (vector x))) testdata4)))))
 
   )
+
+
+
 
 
 

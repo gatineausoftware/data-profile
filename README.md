@@ -41,6 +41,8 @@ spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-S
 
 4. spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-SNAPSHOT-standalone.jar count  s3n://ccnadl/raw/ahold/yr=2015/mo=11/dy=13/Coca_Cola_201345.csv
 
+5. spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-SNAPSHOT-standalone.jar list-bad-records-hcat s3n://ccnadl/raw/crest/ccna_rstr_basc/t_fact_food_summary/yr=2015/mo=10/dy=01/xaf  54.173.182.186 crest_ccna_rstr_basc raw_t_fact_food_summary
+
 ### profile notes:
 - calculate % for different types?
 - infer delimter?
@@ -49,6 +51,7 @@ spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-S
 
 
 ### to do
+1. need to add tests for missing columns vs empty columns e.g., "a,b,c,,d" vs "a,b,c,d"
 2. rather unhappy error message regarding kryo serialization if sample size is too big for profiling
 3. do functions need to be compiled to execute on cluster?
 6. get repl development working ** Yes.  however cannot submit functions defined in REPL**

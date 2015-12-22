@@ -14,11 +14,6 @@
 
 (def base "http://54.173.182.186:50111/templeton/v1/ddl")
 
-(defn get-all-partitions-for-database [database]
-  (let [p1 (client/get (str base "/database/" database "/table" "?user.name=ec2-user"))
-        p2 ((json/read-str (p1 :body)) "tables")]
-        (mapcat (partial get-partitions database) p2)))
-
 
 
 (defn get-partition [database table partition]

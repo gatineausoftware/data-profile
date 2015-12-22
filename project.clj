@@ -10,6 +10,7 @@
                 [org.clojure/tools.cli "0.3.3"]
                 [clj-http "2.0.0"]
                 [org.clojure/data.json "0.2.6"]
+                [org.clojure/math.numeric-tower "0.0.4"]
                 ]
 
  :aot [#".*" sparkling.serialization sparkling.destructuring]
