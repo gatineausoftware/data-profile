@@ -51,6 +51,7 @@ spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-S
 
 
 ### to do
+1. need to add tests for missing columns vs empty columns e.g., "a,b,c,,d" vs "a,b,c,d"
 2. rather unhappy error message regarding kryo serialization if sample size is too big for profiling
 3. do functions need to be compiled to execute on cluster?
 6. get repl development working ** Yes.  however cannot submit functions defined in REPL**

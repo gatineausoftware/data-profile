@@ -55,6 +55,7 @@
 
 
 
+
 ;;if column is missing it's ok....probably this should be specified.
 (defn valid-column? [a b]
   (if (empty? b)

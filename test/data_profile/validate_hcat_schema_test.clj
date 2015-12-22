@@ -27,6 +27,12 @@
     (is (= true (schema/hiveDecimal? (keyword "decimal(10,2)")))))
   (testing
     (is (= {:type :decimal :max 1000000 :max_scale 3} (schema/getHiveDecimal {:type (keyword "decimal(9,3)")}))))
+  (testing
+    (is (true? (schema/valid-column? {:type :decimal :max 10000000 :max_scale 2} "-1.00"))))
+   (testing
+    (is (true? (schema/valid-column? {:type :decimal :max 10000000 :max_scale 2} ""))))
+   (testing
+    (is (true? (schema/valid-column? {:type :decimal :max 10000000 :max_scale 2} "105850598"))))
 )
 
 
