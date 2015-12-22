@@ -73,6 +73,8 @@
 
 
   (defn validate-field [a b]
+    (if (empty? b)
+    {:error []}
     (let [f {:column (:name a) :value b}]
      (conj f {:error
      (case (:type a)
@@ -81,7 +83,7 @@
        :varchar (check-varchar b (:size a))
        :decimal (check-decimal b (:min a) (:max a) (:max_scale a))
        :date (check-date b)
-       [])})))
+       [])}))))
 
 
 
