@@ -107,7 +107,7 @@
 
   (defn list-schema-errors-hcat [rdd database table {:keys [delimiter num-records]}]
     (let [c (read-string (slurp (io/resource "hcat_config.edn")))
-          schema (hive/get-schema (c :server) (c :port) database table)]
+          schema (hive/get-schema (c :server) (c :port) database table (c :user))]
       (->>
         rdd
         (spark/map #(first (csv/parse-csv % :delimiter delimiter)))
@@ -131,7 +131,7 @@
     (->>
      rdd
      (spark/map #(first (csv/parse-csv % :delimiter delimiter)))
-     (spark/filter (complement (partial valid-row? (hive/get-schema (c :server) (c :port) database table))))
+     (spark/filter (complement (partial valid-row? (hive/get-schema (c :server) (c :port) database table (c: :user)))))
      (spark/take num-records))))
 
 

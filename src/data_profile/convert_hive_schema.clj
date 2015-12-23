@@ -11,6 +11,7 @@
               [clojure.data.json :as json])
   (:use       [data-profile.util]))
 
+
 (def min-int -2147483648)
 (def max-int 2147483647)
 
@@ -26,7 +27,7 @@
         d (str/split c #",")
         digits (getInteger (first d))
         scale (getInteger (second d))
-        m (m/expt 10 (- digits scale))]
+        m (dec (m/expt 10 (inc (- digits scale))))]
 
     {
      :name (keyword (a "name"))
@@ -50,6 +51,8 @@
   )
 
 
+;;generic catch all for types witout properties...
+;;need to add smallint, float, double etc...
 (defn getHiveDataType [a]
   {
    :name (keyword (a "name"))
@@ -65,9 +68,9 @@
       :else (getHiveDataType a)))
 
 
-(defn get-schema [hcatserver port database table]
+(defn get-schema [hcatserver port database table user]
   (->>
-    (str "http://" hcatserver ":" port "/templeton/v1/ddl/database/" database "/table/" table "?user.name=ec2-user")
+    (str "http://" hcatserver ":" port "/templeton/v1/ddl/database/" database "/table/" table "?user.name=" user)
     (client/get)
     (:body)
     (json/read-str)
