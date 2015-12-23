@@ -85,12 +85,14 @@
 
 
 
-
+  ; check for number of columns here?
   (defn get-schema-errors [schema row]
+    (if-not (= (count schema) (count row))
+      (list {:error :column_count :schema (count schema) :row (count row)})
     (doall
      (->>
      (map validate-field schema row)
-     (filter #((complement empty?) (:error %))))))
+     (filter #((complement empty?) (:error %)))))))
 
 
   ;;prints out validation errors of num_records that have schema errors

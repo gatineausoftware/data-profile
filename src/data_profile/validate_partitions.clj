@@ -12,6 +12,8 @@
 
 
 
+;;get server, port and username from config files, as in validate_schema
+
 (def base "http://54.173.182.186:50111/templeton/v1/ddl")
 
 
