@@ -54,6 +54,7 @@ spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-S
 1. need to add tests for missing columns vs empty columns e.g., "a,b,c,,d" vs "a,b,c,d"
 2. rather unhappy error message regarding kryo serialization if sample size is too big for profiling
 3. do functions need to be compiled to execute on cluster?
+4. use a config file instead of passing hcat server parameters in.
 6. get repl development working ** Yes.  however cannot submit functions defined in REPL**
 8. compare performance of clojure vs scala.
 9. build function that outputs 'good' data and 'bad' data in separate locations. ** DONE, except need to dig into write-csv, adds extra blank lines **

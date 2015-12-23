@@ -7,7 +7,6 @@
               [clojure-csv.core :as csv]
               [data-profile.profile :as profile]
               [data-profile.cleanse-data :as cleanse]
-              [data-profile.validate-hcat-schema :as hcat]
               [data-profile.validate-partitions :as part]
               [clojure.tools.cli :refer [parse-opts]])
   (:use       [data-profile.util]
@@ -36,11 +35,9 @@
     :default 10
     :parse-fn bigint]
 
-    ["-p" "--port p" "hcat server port"
-     :default 50111
-     :parse-fn bigint]
 
     ["-h" "--help"]])
+
 
 (defn usage [options-summary]
   (->> ["utility for profiling data sets and validating schema"
@@ -55,7 +52,7 @@
         "  profile <filename> Profile contents of a dataset"
         "  check-schema <filename> <schema> checks schema"
         "  cleanse <filename> <schema> <output> Writes file in to 'good' and 'bad' subdirectories"
-        "  list-bad-records-hcat <filename> <hcatserver> <database> <table> "
+        "  list-bad-records-hcat <filename> <database> <table> "
         ""]
        (string/join \newline)))
 
@@ -90,6 +87,11 @@
        (< (count arguments) 3)
             (exit 1 (usage summary))
             (list-schema-errors (spark/text-file sc (second arguments)) (nth arguments 2) options))
+      "list-schema-errors-hcat"
+      (if
+       (< (count arguments) 4)
+            (exit 1 (usage summary))
+            (list-schema-errors-hcat (spark/text-file sc (second arguments)) (nth arguments 2) (nth arguments 3) options))
       "list-bad-records"
       (if
        (< (count arguments) 3)
@@ -102,9 +104,9 @@
             (cleanse/cleanse (spark/text-file sc (second arguments)) (nth arguments 2) (nth arguments 3) options))
       "list-bad-records-hcat"
        (if
-         (< (count arguments) 5)
+         (< (count arguments) 4)
          (exit 1 (usage summary))
-         (hcat/list-bad-records-hcat (spark/text-file sc (second arguments)) (nth arguments 2) (nth arguments 3) (nth arguments 4) options))
+         (list-bad-records-hcat (spark/text-file sc (second arguments)) (nth arguments 2) (nth arguments 3) options))
       "validate-partitions" (part/validate-partitions sc (second arguments))
 
       )
