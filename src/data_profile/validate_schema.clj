@@ -131,7 +131,7 @@
     (->>
      rdd
      (spark/map #(first (csv/parse-csv % :delimiter delimiter)))
-     (spark/filter (complement (partial valid-row? (hive/get-schema (c :server) (c :port) database table (c: :user)))))
+     (spark/filter (complement (partial valid-row? (hive/get-schema (c :server) (c :port) database table (c :user)))))
      (spark/take num-records))))
 
 
