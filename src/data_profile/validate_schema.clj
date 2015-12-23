@@ -85,7 +85,6 @@
 
 
 
-  ; check for number of columns here?
   (defn get-schema-errors [schema row]
     (if-not (= (count schema) (count row))
       (list {:error :column_count :schema (count schema) :row (count row)})

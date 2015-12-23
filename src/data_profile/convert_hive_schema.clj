@@ -76,13 +76,13 @@
     (json/read-str)
     (#(% "columns"))
     (map convert-schema)
-    (filter #(nil? (#{"mo" "yr" "dy"} (% :name))))
+    (filter #(nil? (#{:mo :yr :dy} (% :name))))
     (vec)
    ))
 
 
 
-;(get-schema  "54.173.182.186" 50111 "crest_ccna_rstr_basc" "raw_t_fact_food_summary")
+(get-schema  "54.173.182.186" 50111 "crest_ccna_rstr_basc" "raw_t_fact_food_summary" "ec2-user")
 
 
 
