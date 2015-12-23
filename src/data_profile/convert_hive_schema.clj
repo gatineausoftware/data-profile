@@ -27,7 +27,7 @@
         d (str/split c #",")
         digits (getInteger (first d))
         scale (getInteger (second d))
-        m (dec (m/expt 10 (inc (- digits scale))))]
+        m (dec (m/expt 10 (- digits scale)))]
 
     {
      :name (keyword (a "name"))

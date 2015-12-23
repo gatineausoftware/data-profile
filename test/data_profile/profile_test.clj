@@ -154,12 +154,12 @@
     (testing
       (is (= 10
       (->>
-        (s/text-file sc "resources/sample.csv")
+        (s/text-file sc "test/sample_data/sample.csv")
         (s/count)))))
     (testing
       (is (= 23
         (->
-        (s/text-file sc "resources/sample.csv")
+        (s/text-file sc "test/sample_data/sample.csv")
 
         (p/profile {:sample 1 :delimiter \,})
         count

@@ -26,7 +26,7 @@
   (testing
     (is (= true (schema/hiveDecimal? (keyword "decimal(10,2)")))))
   (testing
-    (is (= {:name :a :type :decimal :max 1000000 :min -1000000 :max_scale 3} (schema/getHiveDecimal {"type" "decimal(9,3)" "name" "a"}))))
+    (is (= {:name :a :type :decimal :max 999999 :min -999999 :max_scale 3} (schema/getHiveDecimal {"type" "decimal(9,3)" "name" "a"}))))
 
 )
 

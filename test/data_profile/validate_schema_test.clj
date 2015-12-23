@@ -62,15 +62,15 @@
     (testing
       (is (= 2
            (->
-           (spark/text-file sc "resources/sample2.csv")
-           (schema/list-bad-records "testschema2.schema" {:delimiter \, :num-records 10})
+           (spark/text-file sc "test/sample_data/sample2.csv")
+           (schema/list-bad-records "schemas/testschema2.schema" {:delimiter \, :num-records 10})
            (count)))))
 
     (testing
       (is (= 2
            (->
-           (spark/text-file sc "resources/sample2.csv")
-           (schema/list-schema-errors "testschema2.schema" {:delimiter \, :num-records 10})
+           (spark/text-file sc "test/sample_data/sample2.csv")
+           (schema/list-schema-errors "schemas/testschema2.schema" {:delimiter \, :num-records 10})
            (count)))))
 
     ))
