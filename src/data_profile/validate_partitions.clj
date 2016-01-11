@@ -48,6 +48,10 @@
      ((json/read-str ((client/get (str base "/database/" database "/table" "?user.name=ec2-user")) :body)) "tables"))
 
 
+  (defn validate-some-partitions [sc database prefix]
+    (let [
+          tables (filter  #(= (str (first %)) prefix) (get-tables-for-database database))]
+      (map (partial count-records-for-table-partitions sc database) tables)))
 
   (defn validate-partitions [sc database]
     (let [tables (get-tables-for-database database)]
