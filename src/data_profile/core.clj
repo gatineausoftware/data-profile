@@ -108,6 +108,7 @@
          (exit 1 (usage summary))
          (list-bad-records-hcat (spark/text-file sc (second arguments)) (nth arguments 2) (nth arguments 3) options))
       "validate-partitions" (part/validate-partitions sc (second arguments))
+      "validate-some-partitions" (part/validate-some-partitions sc (second arguments) (nth argument 2))
 
       )
      (clojure.pprint/pprint))))
