@@ -7,8 +7,7 @@
               [clojure-csv.core :as csv]
               [clojure.java.io :as io]
               [clj-http.client :as client]
-              [clojure.data.json :as json]
-              [data-profile.core :as core])
+              [clojure.data.json :as json])
   (:use       [data-profile.util]))
 
 
@@ -37,7 +36,7 @@
 
 ;;only works with text files...
  (defn count-records [directory]
-      (let [rdd (spark/text-file core/sc (str directory "/"))
+      (let [rdd (spark/text-file sc (str directory "/"))
          c (spark/count rdd)]
       c))
 
@@ -56,12 +55,6 @@
 
   (defn get-tables-for-database [database]
      ((json/read-str ((client/get (str base "/database/" database "/table" "?user.name=" (config :user))) :body)) "tables"))
-
-
-
-  (defn validate-partitions [sc database]
-    (let [tables (get-tables-for-database database)]
-      (map (partial count-records-for-table-partitions sc database) tables)))
 
 
 
