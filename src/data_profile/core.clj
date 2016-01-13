@@ -21,6 +21,8 @@
     (spark/spark-context c)))
 
 
+(defonce sc (make-spark-context))
+
 (def cli-options
   ;; An option with a required argument
   [["-d" "--delimiter d" "CSV delimiter"
@@ -71,7 +73,7 @@
 
 (defn -main [& args]
   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)
-        sc (make-spark-context)
+        ;sc (make-spark-context)
         ]
     ;; Handle help and error conditions
     (cond
@@ -108,7 +110,7 @@
          (exit 1 (usage summary))
          (list-bad-records-hcat (spark/text-file sc (second arguments)) (nth arguments 2) (nth arguments 3) options))
       "validate-partitions" (part/validate-partitions sc (second arguments))
-      "validate-some-partitions" (part/validate-some-partitions sc (second arguments) (nth arguments 2))
+      "part/check-record-counts" (part/check-record-counts (second arguments) (nth arguments 2))
 
       )
      (clojure.pprint/pprint))))
