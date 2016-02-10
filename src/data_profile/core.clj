@@ -14,11 +14,9 @@
               )
   (:gen-class))
 
-(defn make-spark-context []
-  (let [c (-> (conf/spark-conf)
-              (conf/master "local[*]")
-              (conf/app-name "data-profile"))]
-    (spark/spark-context c)))
+
+
+
 
 
 (def cli-options
@@ -71,7 +69,7 @@
 
 (defn -main [& args]
   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)
-        sc (make-spark-context)
+        ;sc (make-spark-context)
         ]
     ;; Handle help and error conditions
     (cond
@@ -107,8 +105,8 @@
          (< (count arguments) 4)
          (exit 1 (usage summary))
          (list-bad-records-hcat (spark/text-file sc (second arguments)) (nth arguments 2) (nth arguments 3) options))
-      "validate-partitions" (part/validate-partitions sc (second arguments))
-      "validate-some-partitions" (part/validate-some-partitions sc (second arguments) (nth arguments 2))
+
+      "check-record-counts" (part/check-record-counts (second arguments) (nth arguments 2))
 
       )
      (clojure.pprint/pprint))))

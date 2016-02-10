@@ -30,8 +30,14 @@ spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-S
 3. lein run cleanse resources/sample2.csv testschema2.schema output
 4. lein run list-schema-errors resources/sample2.csv testschema2.schema
 
+- note to set up tunnelling for commmands that need hcat:
+ssh -i ~/.ssh/cloudbreak-key-338370 -L 50111:ip-172-31-50-138.ec2.internal:50111 ec2-user@ec2-54-173-182-186.compute-1.amazonaws.com
+
+
 
 ##### on cluster
+
+- note update hcat_config.edn with correct server (54.173.182.186) on coke data lake
 
 1. spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-SNAPSHOT-standalone.jar profile s3n://ccnadl/raw/crest/ccna_rstr_basc/t_fact_food_summary/yr=2015/mo=10/dy=01/xaf -s 0.01 -d \|
 
@@ -42,6 +48,8 @@ spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-S
 4. spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-SNAPSHOT-standalone.jar count  s3n://ccnadl/raw/ahold/yr=2015/mo=11/dy=13/Coca_Cola_201345.csv
 
 5. spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-SNAPSHOT-standalone.jar list-bad-records-hcat s3n://ccnadl/raw/crest/ccna_rstr_basc/t_fact_food_summary/yr=2015/mo=10/dy=01/xaf  54.173.182.186 crest_ccna_rstr_basc raw_t_fact_food_summary
+
+6. spark-submit --class data_profile.core --master yarn target/data-profile-0.1.0-SNAPSHOT-standalone.jar validate-some-partitions data_lakes_views b
 
 ### profile notes:
 - calculate % for different types?

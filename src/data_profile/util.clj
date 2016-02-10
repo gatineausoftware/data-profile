@@ -1,9 +1,20 @@
 (ns data-profile.util
 (:require [clojure.string :as string]
-            [clojure.string :as str]
-            [clj-time.core :as t]
-            [clj-time.format :as f]))
+          [clojure.string :as str]
+          [sparkling.conf :as conf]
+          [sparkling.core :as spark]
+          [clj-time.core :as t]
+          [clj-time.format :as f]))
 
+
+
+(defn make-spark-context []
+  (let [c (-> (conf/spark-conf)
+              (conf/master "local[*]")
+              (conf/app-name "data-profile"))]
+    (spark/spark-context c)))
+
+(defonce sc (make-spark-context))
 
 
 ;;may need to trim leading and trailing spaces...
